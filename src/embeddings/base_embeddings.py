@@ -20,3 +20,10 @@ class BaseEmbeddings(ABC):
             List of Document objects with embeddings added.
         """
         pass
+
+    @abstractmethod
+    def embed_query(self, query: str) -> List[float]:
+        """
+        Generate an embedding for a query string.
+        """
+        pass

@@ -38,3 +38,18 @@ class HuggingFaceEmbeddings(BaseEmbeddings):
             document.embedding = embedding.tolist()
 
         return documents
+    
+    def embed_query(self, query: str) -> List[float]:
+        """
+        Generate an embedding for a query.
+        """
+
+        if not isinstance(query, str):
+            raise TypeError("query must be a string.")
+
+        if not query.strip():
+            raise ValueError("query cannot be empty.")
+
+        embedding = self.model.encode(query)
+
+        return embedding.tolist()
