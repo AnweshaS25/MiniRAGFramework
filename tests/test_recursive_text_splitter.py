@@ -20,6 +20,8 @@ for i, chunk in enumerate(chunks[:5], start=1):
     print(f"\nChunk {i}")
     print("-" * 40)
     print(chunk.metadata)
+    print("\nLength of this chunk: ")
+    print(len(chunk.content))
     print(chunk.content)
 
 assert len(chunks) > 0
