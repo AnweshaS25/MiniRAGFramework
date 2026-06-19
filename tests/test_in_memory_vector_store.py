@@ -42,4 +42,4 @@ assert all(result.embedding is not None for result in results)
 assert all(len(result.embedding) == 384 for result in results)
 assert all(result.content for result in results)
 
-print("\n✅ InMemoryVectorStore test passed successfully!")
+print("\n InMemoryVectorStore test passed successfully!")
