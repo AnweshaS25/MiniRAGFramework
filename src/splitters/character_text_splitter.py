@@ -4,7 +4,7 @@ from typing import List
 
 class CharacterTextSplitter(BaseSplitter):
     
-    def __init__(self, chunk_size: int, chunk_overlap: int):
+    def __init__(self, chunk_size: int=500, chunk_overlap: int=100):
 
         if chunk_size <= 0:
             raise ValueError("chunk_size must be greater than 0.")
