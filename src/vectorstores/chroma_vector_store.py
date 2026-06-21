@@ -90,3 +90,23 @@ class ChromaVectorStore(BaseVectorStore):
             )
 
         return retrieved_documents
+    
+
+    def clear(self) -> None:
+        """
+        Removes all documents from the collection.
+        """
+
+        try:
+            self._client.delete_collection(
+                name=self.collection_name
+            )
+
+            self._collection = self._client.get_or_create_collection(
+                name=self.collection_name
+            )
+
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to clear collection '{self.collection_name}': {e}"
+            )

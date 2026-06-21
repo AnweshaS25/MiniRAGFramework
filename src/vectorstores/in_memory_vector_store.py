@@ -82,3 +82,11 @@ class InMemoryVectorStore(BaseVectorStore):
             document
             for _, document in top_k
         ]
+    
+
+    def clear(self) -> None:
+        """
+        Removes all documents from the in-memory vector store.
+        """
+
+        self.documents.clear()

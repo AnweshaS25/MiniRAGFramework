@@ -21,3 +21,10 @@ class BaseVectorStore(ABC):
         Return the k most similar documents.
         """
         pass
+
+    @abstractmethod
+    def clear(self):
+        """
+        Remove all documents from the vector store.
+        """
+        pass
