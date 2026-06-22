@@ -33,8 +33,8 @@ st.set_page_config(
 
 st.title("📄 MiniRAG PDF Assistant")
 
-st.write(
-    "Upload a PDF and ask questions about it."
+st.caption(
+    "Upload a PDF and ask questions using Retrieval-Augmented Generation."
 )
 
 if "indexed" not in st.session_state:
@@ -49,10 +49,37 @@ if "current_file" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-uploaded_file = st.file_uploader(
-    "Choose a PDF",
-    type=["pdf"],
-)
+
+with st.sidebar:
+
+    st.header("📂 Document")
+
+    uploaded_file = st.file_uploader(
+        "Choose a PDF",
+        type=["pdf"],
+    )
+
+    st.divider()
+
+    if st.session_state.indexed:
+
+        st.success("✅ Document Indexed")
+
+        st.write(f"**Current PDF:**")
+        st.caption(st.session_state.current_file)
+
+        if "num_chunks" in st.session_state:
+            st.write(f"**Chunks:** {st.session_state.num_chunks}")
+
+        st.write("**Embedding:**")
+        st.caption("Sentence Transformers")
+
+        st.write("**Vector Store:**")
+        st.caption("ChromaDB")
+
+        st.write("**LLM:**")
+        st.caption("Groq Llama 3.3 70B")
+
 
 if uploaded_file is not None: 
 
@@ -61,6 +88,12 @@ if uploaded_file is not None:
     )
 
     if file_changed:
+
+        st.session_state.messages = []
+
+        st.session_state.indexed = False
+        st.session_state.rag_pipeline = None
+        st.session_state.current_file = None
 
         with st.spinner("📄 Saving uploaded PDF..."):
 
@@ -121,24 +154,32 @@ if uploaded_file is not None:
         st.session_state.rag_pipeline = rag_pipeline
         st.session_state.indexed = True
         st.session_state.current_file = uploaded_file.name
+        st.session_state.num_chunks = len(chunks)
+
+        st.rerun()
 
         st.success(f"✅ Successfully indexed {len(chunks)} chunks!")
 
+
+
+# ---------------- Chat ---------------- #
+
 if st.session_state.indexed:
 
-    st.success(
-        f"Current document: {st.session_state.current_file}"
-    )
-
+    # Display previous messages
     for message in st.session_state.messages:
+
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
+    # Chat input
     user_question = st.chat_input(
         "Ask a question about the PDF..."
     )
 
     if user_question:
+
+        # Display user message immediately
         st.session_state.messages.append(
             {
                 "role": "user",
@@ -149,21 +190,76 @@ if st.session_state.indexed:
         with st.chat_message("user"):
             st.markdown(user_question)
 
+        # Generate assistant response
         with st.chat_message("assistant"):
 
-            with st.spinner("Thinking..."):
+            with st.spinner("🤖 Thinking..."):
 
-                response = st.session_state.rag_pipeline.run(
-                    query=user_question,
-                )
+                try:
 
-                assistant_answer = response.text
+                    llm_response = st.session_state.rag_pipeline.run(
+                        query=user_question,
+                    )
+
+                    assistant_answer = llm_response.text
+
+                except Exception as e:
+
+                    assistant_answer = f"❌ Error: {e}"
 
                 st.markdown(assistant_answer)
 
+        # Save assistant response
         st.session_state.messages.append(
             {
                 "role": "assistant",
                 "content": assistant_answer,
-                }
+            }
         )
+
+
+
+
+# if st.session_state.indexed:
+
+#     st.success(
+#         f"Current document: {st.session_state.current_file}"
+#     )
+
+#     for message in st.session_state.messages:
+#         with st.chat_message(message["role"]):
+#             st.markdown(message["content"])
+
+#     user_question = st.chat_input(
+#         "Ask a question about the PDF..."
+#     )
+
+#     if user_question:
+#         st.session_state.messages.append(
+#             {
+#                 "role": "user",
+#                 "content": user_question,
+#             }
+#         )
+
+#         with st.chat_message("user"):
+#             st.markdown(user_question)
+
+#         with st.chat_message("assistant"):
+
+#             with st.spinner("Thinking..."):
+
+#                 response = st.session_state.rag_pipeline.run(
+#                     query=user_question,
+#                 )
+
+#                 assistant_answer = response.text
+
+#                 st.markdown(assistant_answer)
+
+#         st.session_state.messages.append(
+#             {
+#                 "role": "assistant",
+#                 "content": assistant_answer,
+#                 }
+#         )
