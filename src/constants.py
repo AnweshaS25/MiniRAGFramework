@@ -15,6 +15,7 @@ class SplitterTypes:
 
 class EmbeddingTypes:
     HUGGINGFACE = "huggingface"
+    BGE = "bge"
 
 
 class VectorStoreTypes:
