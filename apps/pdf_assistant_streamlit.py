@@ -13,13 +13,13 @@ import tempfile
 
 import streamlit as st
 
-from src.loaders.pdf_loader import PDFLoader
-from src.splitters.recursive_text_splitter import RecursiveTextSplitter
-from src.embeddings.huggingface_embeddings import HuggingFaceEmbeddings
-from src.vectorstores.chroma_vector_store import ChromaVectorStore
-from src.retrievers.similarity_retriever import SimilarityRetriever
+from src.factories.loader_factory import LoaderFactory
+from src.factories.splitter_factory import SplitterFactory
+from src.factories.embedding_factory import EmbeddingFactory
+from src.factories.vector_store_factory import VectorStoreFactory
+from src.factories.retriever_factory import RetrieverFactory
 from src.prompts.default_prompt_template import DefaultPromptTemplate
-from src.llms.groq_llm import GroqLLM
+from src.factories.llm_factory import LLMFactory
 
 from src.pipelines.indexing_pipeline import IndexingPipeline
 from src.pipelines.rag_pipeline import RAGPipeline
@@ -107,13 +107,14 @@ if uploaded_file is not None:
 
         st.success("PDF uploaded successfully!")
 
-        loader = PDFLoader(pdf_path)
+        loader = LoaderFactory.create("pdf",file_path=pdf_path,)
 
-        splitter = RecursiveTextSplitter()
+        splitter = SplitterFactory.create("recursive")
 
-        embedding_model = HuggingFaceEmbeddings()
+        embedding_model = EmbeddingFactory.create("huggingface")
 
-        vector_store = ChromaVectorStore(
+        vector_store = VectorStoreFactory.create(
+            "chroma",
             collection_name="streamlit_pdf_assistant",
             persist_directory="./streamlit_chroma_db",
         )
@@ -136,14 +137,15 @@ if uploaded_file is not None:
             if os.path.exists(pdf_path):
                 os.remove(pdf_path)
 
-        retriever = SimilarityRetriever(
+        retriever = RetrieverFactory.create(
+            "similarity",
             embedding_model=embedding_model,
             vector_store=vector_store,
         )
 
         prompt_template = DefaultPromptTemplate()
 
-        llm = GroqLLM()
+        llm = LLMFactory.create("groq")
 
         rag_pipeline = RAGPipeline(
             retriever=retriever,
