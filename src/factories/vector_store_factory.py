@@ -1,6 +1,8 @@
 from src.vectorstores.in_memory_vector_store import InMemoryVectorStore
 from src.vectorstores.chroma_vector_store import ChromaVectorStore
 
+from src.constants import VectorStoreTypes
+
 class VectorStoreFactory:
     """
     Factory class for creating vector stores.
@@ -9,10 +11,10 @@ class VectorStoreFactory:
     @staticmethod
     def create(vector_store_type: str, **kwargs,):
 
-        if vector_store_type == "inmemory":
+        if VectorStoreTypes.INMEMORY:
             return InMemoryVectorStore()
         
-        if vector_store_type == "chroma":
+        if VectorStoreTypes.CHROMA:
             return ChromaVectorStore(
                 collection_name=kwargs.get(
                     "collection_name",

@@ -1,6 +1,8 @@
 from src.splitters.character_text_splitter import CharacterTextSplitter
 from src.splitters.recursive_text_splitter import RecursiveTextSplitter
 
+from src.constants import SplitterTypes
+
 class SplitterFactory:
     """
     Factory class for creating text splitters.
@@ -13,11 +15,11 @@ class SplitterFactory:
         """
         
         #Handle recursive splitter
-        if splitter_type == "recursive":
+        if SplitterTypes.RECURSIVE:
             return RecursiveTextSplitter()
         
         #Handle character splitter
-        if splitter_type == "character":
+        if SplitterTypes.CHARACTER:
             return CharacterTextSplitter()
         
         raise ValueError(

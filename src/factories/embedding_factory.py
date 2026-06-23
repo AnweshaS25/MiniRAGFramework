@@ -1,5 +1,7 @@
 from src.embeddings.huggingface_embeddings import HuggingFaceEmbeddings
 
+from src.constants import EmbeddingTypes
+
 class EmbeddingFactory:
     """
     Factory class for creating embedding models.
@@ -8,7 +10,7 @@ class EmbeddingFactory:
     @staticmethod
     def create(embedding_type: str):
 
-        if embedding_type == "huggingface":
+        if EmbeddingTypes.HUGGINGFACE:
             return HuggingFaceEmbeddings()
         
         raise ValueError(

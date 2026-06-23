@@ -1,5 +1,7 @@
 from src.llms.groq_llm import GroqLLM
 
+from src.constants import LLMTypes
+
 class LLMFactory:
     """
     Factory class for creating Large Language Models.
@@ -8,7 +10,7 @@ class LLMFactory:
     @staticmethod
     def create(llm_type: str, **kwargs,):
 
-        if llm_type == "groq":
+        if LLMTypes.GROQ:
             return GroqLLM()
         
         raise ValueError(

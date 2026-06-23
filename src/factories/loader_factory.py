@@ -1,4 +1,5 @@
 from src.loaders.pdf_loader import PDFLoader
+from src.constants import LoaderTypes
 
 class LoaderFactory:
     """
@@ -8,7 +9,7 @@ class LoaderFactory:
     @staticmethod
     def create(loader_type: str, **kwargs,):
 
-        if loader_type == "pdf":
+        if loader_type == LoaderTypes.PDF:
             return PDFLoader(
                 kwargs["file_path"]
             )

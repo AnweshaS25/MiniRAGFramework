@@ -21,6 +21,15 @@ from src.factories.retriever_factory import RetrieverFactory
 from src.prompts.default_prompt_template import DefaultPromptTemplate
 from src.factories.llm_factory import LLMFactory
 
+from src.constants import (
+    LoaderTypes,
+    SplitterTypes,
+    EmbeddingTypes,
+    VectorStoreTypes,
+    RetrieverTypes,
+    LLMTypes,
+)
+
 from src.pipelines.indexing_pipeline import IndexingPipeline
 from src.pipelines.rag_pipeline import RAGPipeline
 
@@ -107,14 +116,14 @@ if uploaded_file is not None:
 
         st.success("PDF uploaded successfully!")
 
-        loader = LoaderFactory.create("pdf",file_path=pdf_path,)
+        loader = LoaderFactory.create(LoaderTypes.PDF, file_path=pdf_path,)
 
-        splitter = SplitterFactory.create("recursive")
+        splitter = SplitterFactory.create(SplitterTypes.RECURSIVE,)
 
-        embedding_model = EmbeddingFactory.create("huggingface")
+        embedding_model = EmbeddingFactory.create(EmbeddingTypes.HUGGINGFACE,)
 
         vector_store = VectorStoreFactory.create(
-            "chroma",
+            VectorStoreTypes.CHROMA,
             collection_name="streamlit_pdf_assistant",
             persist_directory="./streamlit_chroma_db",
         )
@@ -138,14 +147,14 @@ if uploaded_file is not None:
                 os.remove(pdf_path)
 
         retriever = RetrieverFactory.create(
-            "similarity",
+            RetrieverTypes.SIMILARITY,
             embedding_model=embedding_model,
             vector_store=vector_store,
         )
 
         prompt_template = DefaultPromptTemplate()
 
-        llm = LLMFactory.create("groq")
+        llm = LLMFactory.create(LLMTypes.GROQ,)
 
         rag_pipeline = RAGPipeline(
             retriever=retriever,
