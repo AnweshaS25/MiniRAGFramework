@@ -10,6 +10,7 @@ class LoaderTypes:
 class SplitterTypes:
     CHARACTER = "character"
     RECURSIVE = "recursive"
+    TOKEN = "token"
 
 
 class EmbeddingTypes:
