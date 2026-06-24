@@ -11,10 +11,10 @@ class VectorStoreFactory:
     @staticmethod
     def create(vector_store_type: str, **kwargs,):
 
-        if VectorStoreTypes.INMEMORY:
+        if vector_store_type == VectorStoreTypes.IN_MEMORY:
             return InMemoryVectorStore()
         
-        if VectorStoreTypes.CHROMA:
+        elif vector_store_type == VectorStoreTypes.CHROMA:
             return ChromaVectorStore(
                 collection_name=kwargs.get(
                     "collection_name",

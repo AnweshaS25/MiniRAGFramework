@@ -19,7 +19,7 @@ class EmbeddingTypes:
 
 
 class VectorStoreTypes:
-    INMEMORY = "inmemory"
+    IN_MEMORY = "in_memory"
     CHROMA = "chroma"
 
 
