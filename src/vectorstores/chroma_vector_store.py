@@ -71,7 +71,7 @@ class ChromaVectorStore(BaseVectorStore):
             raise ValueError("k must be greater than 0.")
         
         try:
-            results = self._collection.query(query_embeddings=[query_embedding], n_results=k,)
+            results = self._collection.query(query_embeddings=[query_embedding], n_results=k, include=["documents", "metadatas", "embeddings",],)
         except Exception as e:
             raise RuntimeError(f"Failed to perform similarity search: {e}")
         
@@ -80,13 +80,14 @@ class ChromaVectorStore(BaseVectorStore):
         
         documents = results["documents"][0]
         metadatas = results["metadatas"][0] or [{} for _ in documents]
+        embeddings = results["embeddings"][0]
 
         #Converting back to document object
         retrieved_documents = []
 
-        for content, metadata in zip(documents, metadatas):
+        for content, metadata, embedding in zip(documents, metadatas, embeddings):
             retrieved_documents.append(
-                Document(content=content,metadata=metadata,)
+                Document(content=content,metadata=metadata,embedding=embedding)
             )
 
         return retrieved_documents
