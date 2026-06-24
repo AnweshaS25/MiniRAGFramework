@@ -1,5 +1,6 @@
 from src.llms.groq_llm import GroqLLM
 from src.llms.ollama_llm import OllamaLLM
+from src.llms.gemini_llm import GeminiLLM
 
 from src.constants import LLMTypes
 
@@ -29,6 +30,19 @@ class LLMFactory:
                     0.7,
                 ),
             )
+        
+        elif llm_type == LLMTypes.GEMINI:
+            return GeminiLLM(
+                api_key=kwargs["api_key"],
+                model=kwargs.get(
+                    "model",
+                    "gemini-2.5-flash",
+            ),
+            temperature=kwargs.get(
+                "temperature",
+                0.7,
+            ),
+        )
         
         raise ValueError(
             f"Unsupported LLM: {llm_type}"
