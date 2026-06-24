@@ -30,3 +30,4 @@ class RetrieverTypes:
 
 class LLMTypes:
     GROQ = "groq"
+    OLLAMA = "ollama"

@@ -7,7 +7,7 @@ class BaseLLM(ABC):
     """
 
     @abstractmethod
-    def generate(self, prompt: str,) -> LLMResponse:
+    def generate(self, prompt: str, **kwargs,) -> LLMResponse:
         """
         Generate a response for the given prompt.
         """
