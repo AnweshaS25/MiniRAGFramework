@@ -25,6 +25,7 @@ class VectorStoreTypes:
 
 class RetrieverTypes:
     SIMILARITY = "similarity"
+    MMR = "mmr"
 
 
 class LLMTypes:
