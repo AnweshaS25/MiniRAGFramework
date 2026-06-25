@@ -9,6 +9,9 @@ from src.llms.groq_llm import GroqLLM
 
 from src.pipelines.rag_pipeline import RAGPipeline
 
+from src.factories.reranker_factory import RerankerFactory
+from src.constants import RerankerTypes
+
 
 embedding_model = HuggingFaceEmbeddings()
 
@@ -29,11 +32,15 @@ prompt_template = DefaultPromptTemplate()
 # LLM
 llm = GroqLLM()
 
+#Reranker
+reranker = RerankerFactory.create(RerankerTypes.NONE,)
+
 # Pipeline
 pipeline = RAGPipeline(
     retriever=retriever,
     prompt_template=prompt_template,
     llm=llm,
+    reranker=reranker,
 )
 
 response = pipeline.run(

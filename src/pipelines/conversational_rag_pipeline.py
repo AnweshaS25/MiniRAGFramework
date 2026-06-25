@@ -4,6 +4,7 @@ from src.pipelines.rag_pipeline import RAGPipeline
 from src.retrievers.base_retriever import BaseRetriever
 from src.prompts.base_prompt_template import BasePromptTemplate
 from src.llms.base_llm import BaseLLM
+from src.rerankers.base_reranker import BaseReranker
 
 from src.core.llm_response import LLMResponse
 
@@ -17,6 +18,7 @@ class ConversationalRAGPipeline(RAGPipeline):
         retriever: BaseRetriever,
         prompt_template: BasePromptTemplate,
         llm: BaseLLM,
+        reranker: BaseReranker,
         memory: BaseMemory,
     ):
 
@@ -24,6 +26,7 @@ class ConversationalRAGPipeline(RAGPipeline):
             retriever=retriever,
             prompt_template=prompt_template,
             llm=llm,
+            reranker=reranker,
         )
 
         self.memory = memory

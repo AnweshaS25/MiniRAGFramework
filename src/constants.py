@@ -41,3 +41,8 @@ class PromptTemplateTypes:
 
 class MemoryTypes:
     CONVERSATION_BUFFER = "conversation_buffer"
+
+
+class RerankerTypes:
+    NONE = "none"
+    CROSS_ENCODER = "cross_encoder"

@@ -3,6 +3,7 @@ from src.constants import (EmbeddingTypes, VectorStoreTypes, RetrieverTypes,)
 from src.factories.embedding_factory import EmbeddingFactory
 from src.factories.vector_store_factory import VectorStoreFactory
 from src.factories.retriever_factory import RetrieverFactory
+from src.factories.reranker_factory import RerankerFactory
 
 from src.prompts.default_prompt_template import DefaultPromptTemplate
 
@@ -13,6 +14,8 @@ from src.memory.conversation_buffer_memory import ConversationBufferMemory
 from src.pipelines.conversational_rag_pipeline import (
     ConversationalRAGPipeline,
 )
+
+from src.constants import RerankerTypes
 
 from src.core.document import Document
 
@@ -57,6 +60,7 @@ retriever = RetrieverFactory.create(
     vector_store=vector_store,
 )
 
+reranker = RerankerFactory.create(RerankerTypes.NONE,)
 
 prompt_template = DefaultPromptTemplate()
 
@@ -73,6 +77,7 @@ pipeline = ConversationalRAGPipeline(
     retriever=retriever,
     prompt_template=prompt_template,
     llm=llm,
+    reranker=reranker,
     memory=memory,
 )
 
