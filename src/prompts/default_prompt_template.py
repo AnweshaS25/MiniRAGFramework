@@ -29,8 +29,8 @@ Do not make up information.
         if not question.strip():
             raise ValueError("question cannot be empty.")
 
-        if not context.strip():
-            raise ValueError("context cannot be empty.")
+        if context is None:
+            raise ValueError("context cannot be None.")
 
         return self._TEMPLATE.format(
             context=context,

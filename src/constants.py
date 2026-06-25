@@ -33,3 +33,7 @@ class LLMTypes:
     OLLAMA = "ollama"
     GEMINI = "gemini"
     OPENAI = "openai"
+
+
+class PromptTemplateTypes:
+    DEFAULT = "default"

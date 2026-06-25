@@ -44,9 +44,11 @@ class RAGPipeline(BasePipeline):
         documents = self.retriever.retrieve(query=query, k=k)
 
         if not documents:
-            raise ValueError("No relevant documents were retrieved.")
+            context = ""
+        else:
+            context = self._build_context(documents)
         
-        context = self._build_context(documents)
+        # context = self._build_context(documents)
 
         prompt = self.prompt_template.format(question=query, context=context)
 
