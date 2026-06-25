@@ -15,6 +15,9 @@ If the answer cannot be found in the context, say:
 
 Do not make up information.
 
+### Conversation History:
+{history}
+
 ### Context:
 {context}
 
@@ -24,7 +27,7 @@ Do not make up information.
 ### Answer:
 """
 
-    def format(self, question: str, context: str) -> str:
+    def format(self, question: str, context: str, history: str = "",) -> str:
 
         if not question.strip():
             raise ValueError("question cannot be empty.")
@@ -33,6 +36,7 @@ Do not make up information.
             raise ValueError("context cannot be None.")
 
         return self._TEMPLATE.format(
+            history=history,
             context=context,
             question=question,
         )

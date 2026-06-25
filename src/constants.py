@@ -37,3 +37,7 @@ class LLMTypes:
 
 class PromptTemplateTypes:
     DEFAULT = "default"
+
+
+class MemoryTypes:
+    CONVERSATION_BUFFER = "conversation_buffer"

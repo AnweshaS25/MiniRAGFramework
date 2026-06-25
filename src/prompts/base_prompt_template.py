@@ -6,8 +6,9 @@ class BasePromptTemplate(ABC):
     """
 
     @abstractmethod
-    def format(self, question: str, context: str,) -> str:
+    def format(self, question: str, context: str, history: str = "",) -> str:
         """
-        Format a prompt using the question and retrieved context.
+        Format a prompt using the question, retrieved context,
+        and optional conversation history.
         """
         pass
