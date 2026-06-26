@@ -20,6 +20,7 @@ from src.factories.vector_store_factory import VectorStoreFactory
 from src.factories.retriever_factory import RetrieverFactory
 from src.prompts.default_prompt_template import DefaultPromptTemplate
 from src.factories.llm_factory import LLMFactory
+from src.factories.reranker_factory import RerankerFactory
 
 from src.constants import (
     LoaderTypes,
@@ -28,6 +29,7 @@ from src.constants import (
     VectorStoreTypes,
     RetrieverTypes,
     LLMTypes,
+    RerankerTypes,
 )
 
 from src.pipelines.indexing_pipeline import IndexingPipeline
@@ -152,6 +154,8 @@ if uploaded_file is not None:
             vector_store=vector_store,
         )
 
+        reranker = RerankerFactory.create(RerankerTypes.NONE,)
+
         prompt_template = DefaultPromptTemplate()
 
         llm = LLMFactory.create(LLMTypes.GROQ,)
@@ -160,6 +164,7 @@ if uploaded_file is not None:
             retriever=retriever,
             prompt_template=prompt_template,
             llm=llm,
+            reranker=reranker,
         )
 
         st.session_state.rag_pipeline = rag_pipeline
