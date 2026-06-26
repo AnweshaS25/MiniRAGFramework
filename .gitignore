@@ -34,3 +34,5 @@ test_chroma_db/
 pdf_assistant_db/
 
 streamlit_chroma_db
+
+evaluation_chroma
