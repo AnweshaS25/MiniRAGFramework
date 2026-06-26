@@ -50,7 +50,7 @@ def rouge_l(generated_answer: str, reference_answer: str,) -> float:
 def bert_score_metric(
     generated_answer: str,
     reference_answer: str,
-    model_name: str = "microsoft/deberta-xlarge-mnli",
+    model_name: str = "roberta-large",
 ) -> float:
     """
     Compute BERTScore F1.
