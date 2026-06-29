@@ -14,6 +14,9 @@ from src.prompts.default_prompt_template import DefaultPromptTemplate
 
 from src.pipelines.indexing_pipeline import IndexingPipeline
 
+from src.evaluation.dataset_loaders.csv_dataset_loader import CSVDatasetLoader
+from src.evaluation.dataset_loaders.json_dataset_loader import JSONDatasetLoader
+
 from src.constants import (
     SplitterTypes,
     LoaderTypes,
@@ -90,22 +93,33 @@ runner = EvaluationRunner(
     evaluator=evaluator,
 )
 
-samples = [
-    EvaluationSample(
-        question="What is RAG?",
-        reference_answer="RAG stands for Retrieval-Augmented Generation.",
-    ),
+# samples = [
+#     EvaluationSample(
+#         question="What is RAG?",
+#         reference_answer="RAG stands for Retrieval-Augmented Generation.",
+#     ),
 
-    EvaluationSample(
-        question="What is ChromaDB?",
-        reference_answer="ChromaDB is a vector database.",
-    ),
+#     EvaluationSample(
+#         question="What is ChromaDB?",
+#         reference_answer="ChromaDB is a vector database.",
+#     ),
 
-    EvaluationSample(
-        question="What are embeddings?",
-        reference_answer="Embeddings are numerical vector representations of data.",
-    ),
-]
+#     EvaluationSample(
+#         question="What are embeddings?",
+#         reference_answer="Embeddings are numerical vector representations of data.",
+#     ),
+# ]
+
+loader = CSVDatasetLoader(
+    file_path="tests/data/evaluation_dataset.csv",
+)
+
+# loader = JSONDatasetLoader(
+#     file_path="tests/data/evaluation_dataset.json",
+# )
+
+samples = loader.load()
+
 
 report = runner.run(samples)
 

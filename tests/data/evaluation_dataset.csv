@@ -1,0 +1,4 @@
+question,reference_answer
+What is RAG?,Retrieval-Augmented Generation
+What is ChromaDB?,ChromaDB is a vector database.
+What are embeddings?,Embeddings are numerical vector representations of data.

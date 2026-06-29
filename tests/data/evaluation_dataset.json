@@ -1,0 +1,14 @@
+[
+    {
+        "question": "What is RAG?",
+        "reference_answer": "Retrieval-Augmented Generation"
+    },
+    {
+        "question": "What is ChromaDB?",
+        "reference_answer": "ChromaDB is a vector database."
+    },
+    {
+        "question": "What are embeddings?",
+        "reference_answer": "Embeddings are numerical vector representations of data."
+    }
+]
