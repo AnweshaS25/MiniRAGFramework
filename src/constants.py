@@ -11,6 +11,10 @@ class SplitterTypes:
     CHARACTER = "character"
     RECURSIVE = "recursive"
     TOKEN = "token"
+    SENTENCE = "sentence"
+    MARKDOWN = "markdown"
+    CODE = "code"
+
 
 
 class EmbeddingTypes:

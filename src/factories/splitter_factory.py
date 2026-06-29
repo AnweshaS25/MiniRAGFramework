@@ -1,6 +1,9 @@
 from src.splitters.character_text_splitter import CharacterTextSplitter
 from src.splitters.recursive_text_splitter import RecursiveTextSplitter
 from src.splitters.token_text_splitter import TokenTextSplitter
+from src.splitters.sentence_splitter import SentenceSplitter
+from src.splitters.markdown_splitter import MarkdownSplitter
+from src.splitters.code_splitter import CodeSplitter
 
 from src.constants import SplitterTypes
 
@@ -26,6 +29,18 @@ class SplitterFactory:
         # Handle token splitter
         elif splitter_type == SplitterTypes.TOKEN:
             return TokenTextSplitter()
+        
+        # Handle sentence splitter
+        elif splitter_type == SplitterTypes.SENTENCE:
+            return SentenceSplitter()
+        
+        # Handle markdown splitter
+        elif splitter_type == SplitterTypes.MARKDOWN:
+            return MarkdownSplitter()
+        
+        # Handle code splitter
+        elif splitter_type == SplitterTypes.CODE:
+            return CodeSplitter()
 
         raise ValueError(
             f"Unsupported splitter type: {splitter_type}"
