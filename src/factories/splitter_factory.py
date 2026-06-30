@@ -4,6 +4,9 @@ from src.splitters.token_text_splitter import TokenTextSplitter
 from src.splitters.sentence_splitter import SentenceSplitter
 from src.splitters.markdown_splitter import MarkdownSplitter
 from src.splitters.code_splitter import CodeSplitter
+from src.splitters.sentence_splitter import SentenceSplitter
+from src.splitters.markdown_splitter import MarkdownSplitter
+from src.splitters.code_splitter import CodeSplitter
 
 from src.constants import SplitterTypes
 
