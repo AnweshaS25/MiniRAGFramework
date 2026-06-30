@@ -35,6 +35,9 @@ from src.constants import (
 from src.pipelines.indexing_pipeline import IndexingPipeline
 from src.pipelines.rag_pipeline import RAGPipeline
 
+from src.factories.context_strategy_factory import ContextStrategyFactory
+from src.factories.token_budget_strategy_factory import TokenBudgetStrategyFactory
+
 
 st.set_page_config(
     page_title="MiniRAG PDF Assistant",
@@ -160,11 +163,17 @@ if uploaded_file is not None:
 
         llm = LLMFactory.create(LLMTypes.GROQ,)
 
+        context_strategy = ContextStrategyFactory.create()
+
+        token_budget_strategy = TokenBudgetStrategyFactory.create()
+
         rag_pipeline = RAGPipeline(
             retriever=retriever,
             prompt_template=prompt_template,
             llm=llm,
             reranker=reranker,
+            context_strategy=context_strategy,
+            token_budget_strategy=token_budget_strategy,
         )
 
         st.session_state.rag_pipeline = rag_pipeline

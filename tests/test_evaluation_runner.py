@@ -30,6 +30,9 @@ from src.pipelines.rag_pipeline import RAGPipeline
 
 from src.rerankers.cross_encoder_reranker import CrossEncoderReranker
 
+from src.factories.context_strategy_factory import ContextStrategyFactory
+from src.factories.token_budget_strategy_factory import TokenBudgetStrategyFactory
+
 print("=" * 60)
 print("Creating components")
 print("=" * 60)
@@ -79,11 +82,17 @@ llm = LLMFactory.create(
 
 reranker = CrossEncoderReranker()
 
+context_strategy = ContextStrategyFactory.create()
+
+token_budget_strategy = TokenBudgetStrategyFactory.create()
+
 pipeline = RAGPipeline(
     retriever=retriever,
     prompt_template=prompt_template,
     llm=llm,
     reranker=reranker,
+    context_strategy=context_strategy,
+    token_budget_strategy=token_budget_strategy,
 )
 
 evaluator = RAGEvaluator()

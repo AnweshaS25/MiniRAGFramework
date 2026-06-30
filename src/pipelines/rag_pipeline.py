@@ -10,6 +10,9 @@ from src.prompts.base_prompt_template import BasePromptTemplate
 from src.llms.base_llm import BaseLLM
 from src.rerankers.base_reranker import BaseReranker
 
+from src.strategies.base_context_strategy import BaseContextStrategy
+from src.strategies.base_token_budget_strategy import BaseTokenBudgetStrategy
+
 
 class RAGPipeline(BasePipeline):
     """
@@ -17,7 +20,7 @@ class RAGPipeline(BasePipeline):
     constructing the prompt, and generating the final answer.
     """
 
-    def __init__(self, retriever: BaseRetriever, prompt_template: BasePromptTemplate,llm: BaseLLM, reranker: BaseReranker):
+    def __init__(self, retriever: BaseRetriever, prompt_template: BasePromptTemplate,llm: BaseLLM, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy,):
 
         if retriever is None:
             raise ValueError("retriever cannot be None.")
@@ -30,11 +33,19 @@ class RAGPipeline(BasePipeline):
 
         if reranker is None:
             raise ValueError("reranker cannot be None.")
+        
+        if context_strategy is None:
+            raise ValueError("context_strategy cannot be None.")
+        
+        if token_budget_strategy is None:
+            raise ValueError("token_budget_strategy cannot be None.")
 
         self.retriever = retriever
         self.prompt_template = prompt_template
         self.llm = llm
         self.reranker = reranker
+        self.context_strategy = context_strategy
+        self.token_budget_strategy = token_budget_strategy
 
     def _build_context(self, documents: List[Document],) -> str:
         context_parts = []
@@ -102,14 +113,66 @@ class RAGPipeline(BasePipeline):
         """
         pass
 
+    def _determine_top_k(self) -> int:
+        """
+        Determine how many documents should be retrieved
+        based on the LLM context window.
+        """
 
-    def run(self, query: str, k: int = 3,) -> LLMResponse:
+        return self.context_strategy.get_top_k(
+            self.llm.context_window,
+        )
+
+
+    def _get_context_token_budget(self) -> int:
+        """
+        Determine how many tokens can be used
+        for retrieved context.
+        """
+
+        return self.token_budget_strategy.get_context_token_budget(
+            self.llm.context_window,
+        )
+    
+
+    def _fit_documents_to_token_budget(self, documents: List[Document], token_budget:int,) -> List[Document]:
+        """
+        Keep adding documents until the token budget is exhausted.
+        """
+
+        selected_documents: List[Document] = []
+        remaining_budget = token_budget
+
+        for document in documents:
+            estimated_tokens = len(document.content) // 4
+
+            if estimated_tokens <= remaining_budget:
+                selected_documents.append(document)
+                remaining_budget -= estimated_tokens
+
+            else:
+                break
+
+        return selected_documents
+
+
+    def run(self, query: str,) -> LLMResponse:
         if not query.strip():
             raise ValueError("Query cannot be empty.")
+        
+        k = self._determine_top_k()
         
         documents = self._retrieve_documents(query=query, k=k,)
 
         documents = self._rerank_documents(query=query, documents=documents, top_k=k,)
+
+        token_budget = self._get_context_token_budget()
+
+        documents = self._fit_documents_to_token_budget(
+            documents=documents,
+            token_budget=token_budget,
+        )
+
 
         if not documents:
             context = ""
@@ -128,4 +191,4 @@ class RAGPipeline(BasePipeline):
             response=response,
         )
 
-        return response
+        return response 

@@ -12,6 +12,9 @@ from src.pipelines.rag_pipeline import RAGPipeline
 from src.factories.reranker_factory import RerankerFactory
 from src.constants import RerankerTypes
 
+from src.factories.context_strategy_factory import ContextStrategyFactory
+from src.factories.token_budget_strategy_factory import TokenBudgetStrategyFactory
+
 
 embedding_model = HuggingFaceEmbeddings()
 
@@ -32,8 +35,15 @@ prompt_template = DefaultPromptTemplate()
 # LLM
 llm = GroqLLM()
 
+
 #Reranker
 reranker = RerankerFactory.create(RerankerTypes.NONE,)
+
+#Context Strategy
+context_strategy = ContextStrategyFactory.create()
+
+#Token Budget
+token_budget_strategy = TokenBudgetStrategyFactory.create()
 
 # Pipeline
 pipeline = RAGPipeline(
@@ -41,11 +51,12 @@ pipeline = RAGPipeline(
     prompt_template=prompt_template,
     llm=llm,
     reranker=reranker,
+    context_strategy=context_strategy,
+    token_budget_strategy=token_budget_strategy,
 )
 
 response = pipeline.run(
     query="Are Cart and Wishlist used here?",
-    k=3,
 )
 
 

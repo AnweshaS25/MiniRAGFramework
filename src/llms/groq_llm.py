@@ -33,8 +33,15 @@ class GroqLLM(BaseLLM):
         self.temperature = temperature
         self.max_tokens = max_tokens
 
+        self._context_window = 128000
+
 
         self._client = Groq(api_key=api_key)
+
+
+    @property
+    def context_window(self) -> int:
+        return self._context_window
 
 
     def generate(self, prompt: str,) -> LLMResponse:
