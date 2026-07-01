@@ -21,6 +21,7 @@ from src.factories.retriever_factory import RetrieverFactory
 from src.prompts.default_prompt_template import DefaultPromptTemplate
 from src.factories.llm_factory import LLMFactory
 from src.factories.reranker_factory import RerankerFactory
+from src.factories.security_guard_factory import SecurityGuardFactory
 
 from src.constants import (
     LoaderTypes,
@@ -30,6 +31,7 @@ from src.constants import (
     RetrieverTypes,
     LLMTypes,
     RerankerTypes,
+    SecurityTypes,
 )
 
 from src.pipelines.indexing_pipeline import IndexingPipeline
@@ -37,6 +39,8 @@ from src.pipelines.rag_pipeline import RAGPipeline
 
 from src.factories.context_strategy_factory import ContextStrategyFactory
 from src.factories.token_budget_strategy_factory import TokenBudgetStrategyFactory
+
+from src.factories.security_guard_factory import SecurityGuardFactory
 
 
 st.set_page_config(
@@ -127,6 +131,11 @@ if uploaded_file is not None:
 
         embedding_model = EmbeddingFactory.create(EmbeddingTypes.HUGGINGFACE,)
 
+        security_guard = SecurityGuardFactory.create(
+            security_type=SecurityTypes.SEMANTIC,
+            embedding_model=embedding_model,
+        )
+
         vector_store = VectorStoreFactory.create(
             VectorStoreTypes.CHROMA,
             collection_name="streamlit_pdf_assistant",
@@ -167,6 +176,7 @@ if uploaded_file is not None:
 
         token_budget_strategy = TokenBudgetStrategyFactory.create()
 
+
         rag_pipeline = RAGPipeline(
             retriever=retriever,
             prompt_template=prompt_template,
@@ -174,6 +184,7 @@ if uploaded_file is not None:
             reranker=reranker,
             context_strategy=context_strategy,
             token_budget_strategy=token_budget_strategy,
+            security_guard=security_guard,
         )
 
         st.session_state.rag_pipeline = rag_pipeline

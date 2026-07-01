@@ -50,3 +50,8 @@ class MemoryTypes:
 class RerankerTypes:
     NONE = "none"
     CROSS_ENCODER = "cross_encoder"
+
+
+class SecurityTypes:
+    RULE_BASED = "rule_based"
+    SEMANTIC = "semantic"

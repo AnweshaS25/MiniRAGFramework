@@ -13,6 +13,8 @@ from src.rerankers.base_reranker import BaseReranker
 from src.strategies.base_context_strategy import BaseContextStrategy
 from src.strategies.base_token_budget_strategy import BaseTokenBudgetStrategy
 
+from src.security.base_guard import BaseGuard
+
 
 class RAGPipeline(BasePipeline):
     """
@@ -20,7 +22,7 @@ class RAGPipeline(BasePipeline):
     constructing the prompt, and generating the final answer.
     """
 
-    def __init__(self, retriever: BaseRetriever, prompt_template: BasePromptTemplate,llm: BaseLLM, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy,):
+    def __init__(self, retriever: BaseRetriever, prompt_template: BasePromptTemplate,llm: BaseLLM, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard,):
 
         if retriever is None:
             raise ValueError("retriever cannot be None.")
@@ -39,6 +41,9 @@ class RAGPipeline(BasePipeline):
         
         if token_budget_strategy is None:
             raise ValueError("token_budget_strategy cannot be None.")
+        
+        if security_guard is None:
+            raise ValueError("security_guard cannot be None.")
 
         self.retriever = retriever
         self.prompt_template = prompt_template
@@ -46,6 +51,7 @@ class RAGPipeline(BasePipeline):
         self.reranker = reranker
         self.context_strategy = context_strategy
         self.token_budget_strategy = token_budget_strategy
+        self.security_guard = security_guard
 
     def _build_context(self, documents: List[Document],) -> str:
         context_parts = []
@@ -122,6 +128,19 @@ class RAGPipeline(BasePipeline):
         return self.context_strategy.get_top_k(
             self.llm.context_window,
         )
+    
+
+    def _validate_query(self, query: str) -> None:
+        """
+        Validate the user query before retrieval.
+        """
+
+        security_result = self.security_guard.validate(query)
+
+        if not security_result.safe:
+            raise ValueError(
+                security_result.reason
+            )
 
 
     def _get_context_token_budget(self) -> int:
@@ -159,6 +178,8 @@ class RAGPipeline(BasePipeline):
     def run(self, query: str,) -> LLMResponse:
         if not query.strip():
             raise ValueError("Query cannot be empty.")
+        
+        self._validate_query(query)
         
         k = self._determine_top_k()
         
