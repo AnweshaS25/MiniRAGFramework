@@ -22,7 +22,7 @@ class RAGPipeline(BasePipeline):
     constructing the prompt, and generating the final answer.
     """
 
-    def __init__(self, retriever: BaseRetriever, prompt_template: BasePromptTemplate,llm: BaseLLM, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard,):
+    def __init__(self, retriever: BaseRetriever, prompt_template: BasePromptTemplate,llm: BaseLLM, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard, output_guard,):
 
         if retriever is None:
             raise ValueError("retriever cannot be None.")
@@ -44,6 +44,9 @@ class RAGPipeline(BasePipeline):
         
         if security_guard is None:
             raise ValueError("security_guard cannot be None.")
+        
+        if output_guard is None:
+            raise ValueError("output_guard cannot be None.")
 
         self.retriever = retriever
         self.prompt_template = prompt_template
@@ -52,6 +55,7 @@ class RAGPipeline(BasePipeline):
         self.context_strategy = context_strategy
         self.token_budget_strategy = token_budget_strategy
         self.security_guard = security_guard
+        self.output_guard = output_guard
 
     def _build_context(self, documents: List[Document],) -> str:
         context_parts = []
@@ -204,12 +208,17 @@ class RAGPipeline(BasePipeline):
 
         prompt = self._build_prompt(question=query, context=context,)
 
-        response = self._generate_response(prompt,)
+        response = self._generate_response(prompt)
         # llm_response = self.llm.generate(prompt)
+
+        output_result = self.output_guard.validate(response.text,)
+
+        if not output_result.safe:
+            raise ValueError(output_result.reason)
 
         self._after_generation(
             query=query,
             response=response,
         )
 
-        return response 
+        return response

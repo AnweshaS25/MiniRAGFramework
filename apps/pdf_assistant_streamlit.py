@@ -41,6 +41,7 @@ from src.factories.context_strategy_factory import ContextStrategyFactory
 from src.factories.token_budget_strategy_factory import TokenBudgetStrategyFactory
 
 from src.factories.security_guard_factory import SecurityGuardFactory
+from src.factories.output_guard_factory import OutputGuardFactory
 
 
 st.set_page_config(
@@ -172,6 +173,8 @@ if uploaded_file is not None:
             llm=llm,
         )
 
+        output_guard = OutputGuardFactory.create()
+
         context_strategy = ContextStrategyFactory.create()
 
         token_budget_strategy = TokenBudgetStrategyFactory.create()
@@ -185,6 +188,7 @@ if uploaded_file is not None:
             context_strategy=context_strategy,
             token_budget_strategy=token_budget_strategy,
             security_guard=security_guard,
+            output_guard=output_guard,
         )
 
         st.session_state.rag_pipeline = rag_pipeline
