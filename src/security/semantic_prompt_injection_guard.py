@@ -22,7 +22,7 @@ class SemanticPromptInjectionGuard(BaseGuard):
 
         self.attack_embeddings = [
             document.embedding
-            for document in self.attack_documents
+            for document in self.attack_documents 
         ]
 
 

@@ -131,11 +131,6 @@ if uploaded_file is not None:
 
         embedding_model = EmbeddingFactory.create(EmbeddingTypes.HUGGINGFACE,)
 
-        security_guard = SecurityGuardFactory.create(
-            security_type=SecurityTypes.SEMANTIC,
-            embedding_model=embedding_model,
-        )
-
         vector_store = VectorStoreFactory.create(
             VectorStoreTypes.CHROMA,
             collection_name="streamlit_pdf_assistant",
@@ -171,6 +166,11 @@ if uploaded_file is not None:
         prompt_template = DefaultPromptTemplate()
 
         llm = LLMFactory.create(LLMTypes.GROQ,)
+
+        security_guard = SecurityGuardFactory.create(
+            security_type=SecurityTypes.LLM,
+            llm=llm,
+        )
 
         context_strategy = ContextStrategyFactory.create()
 

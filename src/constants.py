@@ -55,3 +55,4 @@ class RerankerTypes:
 class SecurityTypes:
     RULE_BASED = "rule_based"
     SEMANTIC = "semantic"
+    LLM = "llm"
