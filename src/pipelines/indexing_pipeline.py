@@ -1,3 +1,4 @@
+from importlib.metadata import metadata
 from typing import List
 
 from src.core.document import Document
@@ -22,7 +23,7 @@ class IndexingPipeline(BasePipeline):
         self.vector_store = vector_store    
 
 
-    def run(self) -> List[Document]:
+    def run(self, metadata: dict | None = None,) -> List[Document]:
 
         documents = self.loader.load()
 
@@ -35,6 +36,10 @@ class IndexingPipeline(BasePipeline):
             raise ValueError("No chunks were created.")
 
         chunks = self.embedding_model.embed_documents(chunks)
+
+        if metadata is not None:
+            for chunk in chunks:
+                chunk.metadata.update(metadata)
 
         self.vector_store.add_documents(chunks)
 

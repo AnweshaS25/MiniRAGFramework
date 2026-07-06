@@ -3,13 +3,14 @@ from typing import List
 from src.core.document import Document
 from src.retrievers.base_retriever import BaseRetriever
 
+
 class SimilarityRetriever(BaseRetriever):
     """
     Retriever that performs similarity search using the configured
     embedding model and vector store.
     """
 
-    def retrieve(self, query: str, k: int,) -> List[Document]:
+    def retrieve(self, query: str, k: int, metadata_filter: dict | None = None,) -> List[Document]:
         if not query.strip():
             raise ValueError("query cannot be empty.")
 
@@ -18,6 +19,6 @@ class SimilarityRetriever(BaseRetriever):
         
         query_embedding = self.embedding_model.embed_query(query)
 
-        documents = self.vector_store.similarity_search(query_embedding=query_embedding,k=k,)
+        documents = self.vector_store.similarity_search(query_embedding=query_embedding,k=k, metadata_filter=metadata_filter,)
 
         return documents

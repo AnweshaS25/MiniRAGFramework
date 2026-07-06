@@ -32,6 +32,7 @@ from src.constants import (
     LLMTypes,
     RerankerTypes,
     SecurityTypes,
+    RoleTypes,
 )
 
 from src.pipelines.indexing_pipeline import IndexingPipeline
@@ -42,6 +43,17 @@ from src.factories.token_budget_strategy_factory import TokenBudgetStrategyFacto
 
 from src.factories.security_guard_factory import SecurityGuardFactory
 from src.factories.output_guard_factory import OutputGuardFactory
+
+from src.auth.user import User
+from src.factories.role_factory import RoleFactory
+
+
+current_user = User(
+    username="anwesha",
+    roles=[
+       RoleFactory.create(RoleTypes.ADMIN),
+    ],
+)
 
 
 st.set_page_config(
@@ -148,7 +160,11 @@ if uploaded_file is not None:
         )
         try: 
             with st.spinner("🧠 Indexing document..."):
-                chunks = indexing_pipeline.run()
+                chunks = indexing_pipeline.run(
+                    metadata={
+                        "permission": "VIEW_HR_DOCUMENTS"
+                    }
+                )
         except Exception as e:
             st.error(f"Indexing failed: {e}")
             st.stop()
@@ -239,12 +255,15 @@ if st.session_state.indexed:
 
                     llm_response = st.session_state.rag_pipeline.run(
                         query=user_question,
+                        user=current_user,
                     )
 
                     assistant_answer = llm_response.text
 
-                except Exception as e:
+                except PermissionError as e:
+                    assistant_answer = f"🔒 {e}"
 
+                except Exception as e:
                     assistant_answer = f"❌ Error: {e}"
 
                 st.markdown(assistant_answer)

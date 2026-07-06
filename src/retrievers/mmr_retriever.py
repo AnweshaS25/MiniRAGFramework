@@ -9,6 +9,7 @@ from src.retrievers.base_retriever import BaseRetriever
 from src.utils.similarity import cosine_similarity
 
 
+
 class MMRRetriever(BaseRetriever):
     """
     Retriever that performs Maximal Marginal Relevance (MMR) retrieval.
@@ -31,7 +32,7 @@ class MMRRetriever(BaseRetriever):
         self.lambda_param = lambda_param
         self.fetch_k = fetch_k
 
-    def retrieve(self, query: str, k: int,) -> List[Document]:
+    def retrieve(self, query: str, k: int, metadata_filter: dict | None = None,) -> List[Document]:
 
         if not query.strip():
             raise ValueError("query cannot be empty.")
@@ -51,6 +52,7 @@ class MMRRetriever(BaseRetriever):
         candidate_documents = self.vector_store.similarity_search(
             query_embedding=query_embedding,
             k=self.fetch_k,
+            metadata_filter=metadata_filter,
         )
 
         if not candidate_documents:

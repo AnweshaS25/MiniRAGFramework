@@ -16,11 +16,14 @@ class BaseVectorStore(ABC):
         pass
 
     @abstractmethod
-    def similarity_search(self, query_embedding: List[float],k: int) -> List[Document]:
+    def similarity_search(self, query_embedding: List[float], k: int, metadata_filter: dict | None = None,) -> List[Document]:
         """
-        Return the k most similar documents.
+        Retrieve the most similar documents.
+
+        metadata_filter can be used to restrict the search
+        to documents matching specific metadata.
         """
-        pass
+        pass 
 
     @abstractmethod
     def clear(self):

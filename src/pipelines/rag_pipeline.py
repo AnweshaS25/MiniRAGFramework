@@ -15,6 +15,9 @@ from src.strategies.base_token_budget_strategy import BaseTokenBudgetStrategy
 
 from src.security.base_guard import BaseGuard
 
+from src.auth.user import User
+from src.auth.metadata_filter_builder import MetadataFilterBuilder
+
 
 class RAGPipeline(BasePipeline):
     """
@@ -73,14 +76,18 @@ class RAGPipeline(BasePipeline):
         return "\n\n----------------------------------------\n\n".join(context_parts)
         
 
-    def _retrieve_documents(self, query: str, k: int,) -> List[Document]:
+    def _retrieve_documents(self, query: str, user: User, k: int,) -> List[Document]:
         """
         Retrieve relevant documents.
         """
 
+        metadata_filter = MetadataFilterBuilder.build(user)
+
+
         return self.retriever.retrieve(
             query=query,
             k=k,
+            metadata_filter=metadata_filter,
         )
     
 
@@ -179,7 +186,7 @@ class RAGPipeline(BasePipeline):
         return selected_documents
 
 
-    def run(self, query: str,) -> LLMResponse:
+    def run(self, query: str, user: User,) -> LLMResponse:
         if not query.strip():
             raise ValueError("Query cannot be empty.")
         
@@ -187,7 +194,7 @@ class RAGPipeline(BasePipeline):
         
         k = self._determine_top_k()
         
-        documents = self._retrieve_documents(query=query, k=k,)
+        documents = self._retrieve_documents(query=query, user=user, k=k,)
 
         documents = self._rerank_documents(query=query, documents=documents, top_k=k,)
 
@@ -200,9 +207,11 @@ class RAGPipeline(BasePipeline):
 
 
         if not documents:
-            context = ""
-        else:
-            context = self._build_context(documents,)
+            raise PermissionError(
+                "You do not have permission to access any relevant documents."
+            )
+
+        context = self._build_context(documents)
         
         # context = self._build_context(documents)
 

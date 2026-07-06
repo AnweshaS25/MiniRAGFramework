@@ -5,6 +5,8 @@ from src.core.document import Document
 from src.embeddings.base_embeddings import BaseEmbeddings
 from src.vectorstores.base_vector_store import BaseVectorStore
 
+from src.auth.user import User
+
 class BaseRetriever(ABC):
     """
     Abstract base class for all retrievers.
@@ -22,8 +24,11 @@ class BaseRetriever(ABC):
         self.vector_store = vector_store
 
     @abstractmethod
-    def retrieve(self, query: str, k: int,) -> List[Document]:
+    def retrieve(self, query: str, k: int, metadata_filter: dict | None = None,) -> List[Document]:
         """
-        Retrieve the k most relevant documents for the given query.
+        Retrieve relevant documents.
+
+        metadata_filter restricts retrieval to documents
+        matching specific metadata.
         """
         pass

@@ -56,3 +56,10 @@ class SecurityTypes:
     RULE_BASED = "rule_based"
     SEMANTIC = "semantic"
     LLM = "llm"
+
+
+class RoleTypes:
+    ADMIN = "admin"
+    HR = "hr"
+    FINANCE = "finance"
+    ENGINEERING = "engineering"

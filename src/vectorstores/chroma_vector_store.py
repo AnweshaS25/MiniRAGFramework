@@ -60,7 +60,7 @@ class ChromaVectorStore(BaseVectorStore):
             raise RuntimeError(f"Failed to add documents to collection '{self.collection_name}': {e}")
             
 
-    def similarity_search(self, query_embedding: List[float], k: int,) -> List[Document]:
+    def similarity_search(self, query_embedding: List[float], k: int, metadata_filter: dict | None = None,) -> List[Document]:
         """
         Return the k most similar documents.
         """
@@ -71,7 +71,21 @@ class ChromaVectorStore(BaseVectorStore):
             raise ValueError("k must be greater than 0.")
         
         try:
-            results = self._collection.query(query_embeddings=[query_embedding], n_results=k, include=["documents", "metadatas", "embeddings",],)
+
+            query_kwargs = {
+                "query_embeddings": [query_embedding],
+                "n_results": k,
+                "include": [
+                    "documents",
+                    "metadatas",
+                    "embeddings",
+                ],
+            }
+
+            if metadata_filter is not None:
+                query_kwargs["where"] = metadata_filter
+
+            results = self._collection.query(**query_kwargs)
         except Exception as e:
             raise RuntimeError(f"Failed to perform similarity search: {e}")
         

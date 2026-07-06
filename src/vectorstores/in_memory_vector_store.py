@@ -48,7 +48,7 @@ class InMemoryVectorStore(BaseVectorStore):
 
         return float(similarity)
 
-    def similarity_search(self,query_embedding: List[float], k: int) -> List[Document]:
+    def similarity_search(self, query_embedding: List[float], k: int, metadata_filter: dict | None = None,) -> List[Document]:
         if not isinstance(query_embedding, list):
             raise TypeError("query_embedding must be a list of floats.")
 
@@ -61,6 +61,28 @@ class InMemoryVectorStore(BaseVectorStore):
         similarity_scores = []
 
         for document in self.documents:
+
+            if metadata_filter is not None:
+                matches = True
+
+                for key, value in metadata_filter.items():
+
+                    document_value = document.metadata.get(key)
+
+                    if isinstance(value, list):
+
+                        if document_value not in value:
+                            matches = False
+                            break
+
+                    else:
+                        if document_value != value:
+                            matches = False
+                            break
+
+                if not matches:
+                    continue
+
 
             score = self._cosine_similarity(
                 query_embedding,

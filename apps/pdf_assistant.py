@@ -53,7 +53,11 @@ def main():
 
     print("Indexing document...\n")
 
-    chunks = indexing_pipeline.run()
+    chunks = indexing_pipeline.run(
+        metadata={
+        "permission": "VIEW_HR_DOCUMENTS"
+    }
+    )
 
     print(f"Indexed {len(chunks)} chunks successfully!\n")
 
