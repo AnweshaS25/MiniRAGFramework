@@ -31,6 +31,12 @@ def main():
 
     chunks = pipeline.run()
 
+    for chunk in chunks:
+        chunk.metadata["permission"] = "VIEW_HR_DOCUMENTS"
+
+    vector_store.clear()
+    vector_store.add_documents(chunks)
+
     assert len(chunks) > 0
     assert chunks[0].embedding is not None
     assert isinstance(chunks[0].embedding, list)

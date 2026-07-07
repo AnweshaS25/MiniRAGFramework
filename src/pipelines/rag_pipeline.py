@@ -18,6 +18,8 @@ from src.security.base_guard import BaseGuard
 from src.auth.user import User
 from src.auth.metadata_filter_builder import MetadataFilterBuilder
 
+from src.tools.tool_manager import ToolManager
+
 
 class RAGPipeline(BasePipeline):
     """
@@ -25,7 +27,7 @@ class RAGPipeline(BasePipeline):
     constructing the prompt, and generating the final answer.
     """
 
-    def __init__(self, retriever: BaseRetriever, prompt_template: BasePromptTemplate,llm: BaseLLM, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard, output_guard,):
+    def __init__(self, retriever: BaseRetriever, prompt_template: BasePromptTemplate,llm: BaseLLM, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard, output_guard, tool_manager: ToolManager,):
 
         if retriever is None:
             raise ValueError("retriever cannot be None.")
@@ -50,6 +52,9 @@ class RAGPipeline(BasePipeline):
         
         if output_guard is None:
             raise ValueError("output_guard cannot be None.")
+        
+        if tool_manager is None:
+            raise ValueError("tool_manager cannot be None.")
 
         self.retriever = retriever
         self.prompt_template = prompt_template
@@ -59,6 +64,7 @@ class RAGPipeline(BasePipeline):
         self.token_budget_strategy = token_budget_strategy
         self.security_guard = security_guard
         self.output_guard = output_guard
+        self.tool_manager = tool_manager
 
     def _build_context(self, documents: List[Document],) -> str:
         context_parts = []
@@ -191,6 +197,20 @@ class RAGPipeline(BasePipeline):
             raise ValueError("Query cannot be empty.")
         
         self._validate_query(query)
+
+        tool_used, tool_result = self.tool_manager.process(
+            user_query=query,
+            query=query,      # passed as kwargs to tools
+        )
+
+        if tool_used:
+            return LLMResponse(
+                text=str(tool_result),
+                model="calculator",
+                prompt_tokens=0,
+                completion_tokens=0,
+                total_tokens=0,
+            )
         
         k = self._determine_top_k()
         

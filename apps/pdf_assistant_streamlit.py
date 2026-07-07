@@ -47,6 +47,14 @@ from src.factories.output_guard_factory import OutputGuardFactory
 from src.auth.user import User
 from src.factories.role_factory import RoleFactory
 
+from src.tools.tool_registry import ToolRegistry
+from src.tools.tool_executor import ToolExecutor
+from src.tools.calculator_tool import CalculatorTool
+from src.tools.date_time_tool import DateTimeTool
+
+from src.tool_routing.rule_based_tool_router import RuleBasedToolRouter
+from src.tools.tool_manager import ToolManager
+
 
 current_user = User(
     username="anwesha",
@@ -184,6 +192,29 @@ if uploaded_file is not None:
 
         llm = LLMFactory.create(LLMTypes.GROQ,)
 
+        # ---------------- Tools ---------------- #
+
+        tool_registry = ToolRegistry()
+
+        tool_registry.register_tool(
+            CalculatorTool()
+        )
+
+        tool_executor = ToolExecutor(
+            registry=tool_registry,
+        )
+
+        tool_registry.register_tool(
+            DateTimeTool()
+        )
+
+        tool_router = RuleBasedToolRouter()
+
+        tool_manager = ToolManager(
+            router=tool_router,
+            executor=tool_executor,
+        )
+
         security_guard = SecurityGuardFactory.create(
             security_type=SecurityTypes.LLM,
             llm=llm,
@@ -205,6 +236,7 @@ if uploaded_file is not None:
             token_budget_strategy=token_budget_strategy,
             security_guard=security_guard,
             output_guard=output_guard,
+            tool_manager=tool_manager,
         )
 
         st.session_state.rag_pipeline = rag_pipeline

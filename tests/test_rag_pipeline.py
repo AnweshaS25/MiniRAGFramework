@@ -15,6 +15,22 @@ from src.constants import RerankerTypes
 from src.factories.context_strategy_factory import ContextStrategyFactory
 from src.factories.token_budget_strategy_factory import TokenBudgetStrategyFactory
 
+from src.factories.security_guard_factory import SecurityGuardFactory
+from src.factories.output_guard_factory import OutputGuardFactory
+from src.constants import SecurityTypes
+
+from src.tools.tool_registry import ToolRegistry
+from src.tools.tool_executor import ToolExecutor
+from src.tools.tool_manager import ToolManager
+from src.tools.calculator_tool import CalculatorTool
+from src.tools.date_time_tool import DateTimeTool
+
+from src.tool_routing.rule_based_tool_router import RuleBasedToolRouter
+
+from src.auth.user import User
+from src.factories.role_factory import RoleFactory
+from src.constants import RoleTypes
+
 
 embedding_model = HuggingFaceEmbeddings()
 
@@ -45,6 +61,42 @@ context_strategy = ContextStrategyFactory.create()
 #Token Budget
 token_budget_strategy = TokenBudgetStrategyFactory.create()
 
+# Security
+security_guard = SecurityGuardFactory.create(
+    security_type=SecurityTypes.LLM,
+    llm=llm,
+)
+
+# Output Guard
+output_guard = OutputGuardFactory.create()
+
+# ---------------- Tools ---------------- #
+
+tool_registry = ToolRegistry()
+
+tool_registry.register_tool(
+    CalculatorTool()
+)
+
+tool_registry.register_tool(
+    DateTimeTool()
+)
+
+print("Registered tools:")
+for tool in tool_registry.list_tools():
+    print("-", tool.name)
+
+tool_executor = ToolExecutor(
+    registry=tool_registry,
+)
+
+tool_router = RuleBasedToolRouter()
+
+tool_manager = ToolManager(
+    router=tool_router,
+    executor=tool_executor,
+)
+
 # Pipeline
 pipeline = RAGPipeline(
     retriever=retriever,
@@ -53,10 +105,21 @@ pipeline = RAGPipeline(
     reranker=reranker,
     context_strategy=context_strategy,
     token_budget_strategy=token_budget_strategy,
+    security_guard=security_guard,
+    output_guard=output_guard,
+    tool_manager=tool_manager,
+)
+
+current_user = User(
+    username="test_user",
+    roles=[
+        RoleFactory.create(RoleTypes.HR),
+    ],
 )
 
 response = pipeline.run(
     query="Are Cart and Wishlist used here?",
+    user=current_user,
 )
 
 
