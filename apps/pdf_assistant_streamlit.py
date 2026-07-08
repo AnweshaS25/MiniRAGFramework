@@ -55,6 +55,8 @@ from src.tools.date_time_tool import DateTimeTool
 from src.tool_routing.rule_based_tool_router import RuleBasedToolRouter
 from src.tools.tool_manager import ToolManager
 
+from src.tool_routing.llm_tool_router import LLMToolRouter
+from src.prompts.tool_router_prompt import ToolRouterPrompt
 
 current_user = User(
     username="anwesha",
@@ -190,6 +192,8 @@ if uploaded_file is not None:
 
         prompt_template = DefaultPromptTemplate()
 
+        tool_router_prompt = ToolRouterPrompt()
+
         llm = LLMFactory.create(LLMTypes.GROQ,)
 
         # ---------------- Tools ---------------- #
@@ -208,7 +212,11 @@ if uploaded_file is not None:
             DateTimeTool()
         )
 
-        tool_router = RuleBasedToolRouter()
+        tool_router = LLMToolRouter(
+            llm=llm,
+            prompt_template=tool_router_prompt,
+            registry=tool_registry,
+        )
 
         tool_manager = ToolManager(
             router=tool_router,

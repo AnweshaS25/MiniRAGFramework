@@ -204,13 +204,26 @@ class RAGPipeline(BasePipeline):
         )
 
         if tool_used:
-            return LLMResponse(
-                text=str(tool_result),
-                model="calculator",
-                prompt_tokens=0,
-                completion_tokens=0,
-                total_tokens=0,
+
+            tool_prompt = f"""
+        The user asked:
+
+        {query}
+
+        The following is the output from a tool:
+
+        {tool_result}
+
+        Answer the user naturally using this tool output.
+
+        Do not mention that a tool was used.
+        """
+
+            tool_response = self.llm.generate(
+                tool_prompt
             )
+
+            return tool_response
         
         k = self._determine_top_k()
         
