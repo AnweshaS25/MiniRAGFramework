@@ -58,6 +58,15 @@ from src.tools.tool_manager import ToolManager
 from src.tool_routing.llm_tool_router import LLMToolRouter
 from src.prompts.tool_router_prompt import ToolRouterPrompt
 
+from src.prompt_routing.rule_based_prompt_router import RuleBasedPromptRouter
+from src.prompts.prompt_manager import PromptManager
+
+from src.factories.prompt_router_factory import PromptRouterFactory
+from src.constants import PromptRouterTypes
+
+from src.prompts.prompt_router_prompt import PromptRouterPrompt
+
+
 current_user = User(
     username="anwesha",
     roles=[
@@ -188,13 +197,25 @@ if uploaded_file is not None:
             vector_store=vector_store,
         )
 
+        llm = LLMFactory.create(LLMTypes.GROQ,)
+
         reranker = RerankerFactory.create(RerankerTypes.NONE,)
 
-        prompt_template = DefaultPromptTemplate()
+        prompt_router = PromptRouterFactory.create(
+            PromptRouterTypes.LLM,
+            llm=llm,
+            prompt_template=PromptRouterPrompt(),
+        )
+
+        prompt_manager = PromptManager(
+            router=prompt_router,
+            # llm=llm,
+            # prompt_template=PromptRouterPrompt(),
+        )
+        
 
         tool_router_prompt = ToolRouterPrompt()
 
-        llm = LLMFactory.create(LLMTypes.GROQ,)
 
         # ---------------- Tools ---------------- #
 
@@ -237,7 +258,7 @@ if uploaded_file is not None:
 
         rag_pipeline = RAGPipeline(
             retriever=retriever,
-            prompt_template=prompt_template,
+            prompt_manager=prompt_manager,
             llm=llm,
             reranker=reranker,
             context_strategy=context_strategy,

@@ -19,6 +19,7 @@ from src.auth.user import User
 from src.auth.metadata_filter_builder import MetadataFilterBuilder
 
 from src.tools.tool_manager import ToolManager
+from src.prompts.prompt_manager import PromptManager
 
 
 class RAGPipeline(BasePipeline):
@@ -27,12 +28,12 @@ class RAGPipeline(BasePipeline):
     constructing the prompt, and generating the final answer.
     """
 
-    def __init__(self, retriever: BaseRetriever, prompt_template: BasePromptTemplate,llm: BaseLLM, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard, output_guard, tool_manager: ToolManager,):
+    def __init__(self, retriever: BaseRetriever, prompt_manager,llm: BaseLLM, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard, output_guard, tool_manager: ToolManager,):
 
         if retriever is None:
             raise ValueError("retriever cannot be None.")
 
-        if prompt_template is None:
+        if prompt_manager is None:
             raise ValueError("prompt_template cannot be None.")
 
         if llm is None:
@@ -57,7 +58,7 @@ class RAGPipeline(BasePipeline):
             raise ValueError("tool_manager cannot be None.")
 
         self.retriever = retriever
-        self.prompt_template = prompt_template
+        self.prompt_manager = prompt_manager
         self.llm = llm
         self.reranker = reranker
         self.context_strategy = context_strategy
@@ -248,7 +249,13 @@ class RAGPipeline(BasePipeline):
         
         # context = self._build_context(documents)
 
-        prompt = self._build_prompt(question=query, context=context,)
+        prompt_template = self.prompt_manager.get_prompt_template(query)
+
+        prompt = prompt_template.format(
+            question=query,
+            context=context,
+            history="",
+        )
 
         response = self._generate_response(prompt)
         # llm_response = self.llm.generate(prompt)

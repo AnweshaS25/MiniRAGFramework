@@ -66,3 +66,7 @@ class RoleTypes:
     HR = "hr"
     FINANCE = "finance"
     ENGINEERING = "engineering"
+
+class PromptRouterTypes:
+    RULE_BASED = "rule_based"
+    LLM = "llm"
