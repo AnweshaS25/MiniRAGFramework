@@ -41,6 +41,9 @@ class LLMTypes:
 
 class PromptTemplateTypes:
     DEFAULT = "default"
+    CONCISE = "concise"
+    SUMMARY = "summary"
+    CITATION = "citation"
 
 
 class MemoryTypes:

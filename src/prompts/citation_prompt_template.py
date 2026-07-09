@@ -1,30 +1,33 @@
 from src.prompts.base_prompt_template import BasePromptTemplate
 
-class DefaultPromptTemplate(BasePromptTemplate):
+
+class CitationPromptTemplate(BasePromptTemplate):
     """
-    Default prompt template for Retrieval-Augmented Generation (RAG).
+    Prompt template that encourages grounded answers with citations.
     """
 
     _TEMPLATE = """
-You are a helpful AI assistant.
+You are a Retrieval-Augmented Generation (RAG) assistant.
 
-Use only the information provided in the context below to answer the user's question.
+Answer ONLY using the provided context.
 
-If the answer cannot be found in the context, say:
-"I don't know based on the provided context."
+Requirements:
+- Do not invent information.
+- If the answer is unavailable, say:
+  "I don't know based on the provided context."
+- When possible, mention which part of the retrieved context supports your answer.
+- Keep the answer factual and grounded.
 
-Do not make up information.
-
-### Conversation History:
+Conversation History:
 {history}
 
-### Context:
+Context:
 {context}
 
-### Question:
+Question:
 {question}
 
-### Answer:
+Answer:
 """
 
     def format(self, **kwargs) -> str:
@@ -33,13 +36,11 @@ Do not make up information.
         context = kwargs["context"]
         history = kwargs.get("history", "")
 
-
         if not question.strip():
             raise ValueError("question cannot be empty.")
 
         if context is None:
             raise ValueError("context cannot be None.")
-        
 
         return self._TEMPLATE.format(
             question=question,

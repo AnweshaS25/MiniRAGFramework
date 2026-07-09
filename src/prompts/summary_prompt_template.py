@@ -1,30 +1,34 @@
 from src.prompts.base_prompt_template import BasePromptTemplate
 
-class DefaultPromptTemplate(BasePromptTemplate):
+
+class SummaryPromptTemplate(BasePromptTemplate):
     """
-    Default prompt template for Retrieval-Augmented Generation (RAG).
+    Prompt template optimized for document summarization.
     """
 
     _TEMPLATE = """
-You are a helpful AI assistant.
+You are an expert document summarizer.
 
-Use only the information provided in the context below to answer the user's question.
+Use ONLY the provided context.
 
-If the answer cannot be found in the context, say:
-"I don't know based on the provided context."
+Produce a clear and structured summary.
 
-Do not make up information.
+Requirements:
+- Focus on the main ideas.
+- Do not invent information.
+- Ignore irrelevant details.
+- Use bullet points where appropriate.
 
-### Conversation History:
+Conversation History:
 {history}
 
-### Context:
+Context:
 {context}
 
-### Question:
+Question:
 {question}
 
-### Answer:
+Summary:
 """
 
     def format(self, **kwargs) -> str:
@@ -33,13 +37,11 @@ Do not make up information.
         context = kwargs["context"]
         history = kwargs.get("history", "")
 
-
         if not question.strip():
             raise ValueError("question cannot be empty.")
 
         if context is None:
             raise ValueError("context cannot be None.")
-        
 
         return self._TEMPLATE.format(
             question=question,
