@@ -6,6 +6,8 @@ from src.retrievers.similarity_retriever import SimilarityRetriever
 from src.prompts.default_prompt_template import DefaultPromptTemplate
 
 from src.llms.groq_llm import GroqLLM
+from src.llms.gemini_llm import GeminiLLM
+from src.llms.ollama_llm import OllamaLLM
 
 from src.pipelines.rag_pipeline import RAGPipeline
 
@@ -30,6 +32,24 @@ from src.tool_routing.rule_based_tool_router import RuleBasedToolRouter
 from src.auth.user import User
 from src.factories.role_factory import RoleFactory
 from src.constants import RoleTypes
+from src.constants import LLMTypes
+
+from src.prompts.prompt_manager import PromptManager
+from src.prompt_routing.rule_based_prompt_router import RuleBasedPromptRouter
+from src.prompt_routing.llm_prompt_router import LLMPromptRouter
+
+from src.llm_routing.rule_based_llm_router import RuleBasedLLMRouter
+from src.llms.llm_manager import LLMManager
+
+from src.prompts.prompt_router_prompt import PromptRouterPrompt
+
+from src.prompts.prompt_registry import PromptRegistry
+from src.prompts.default_prompt_template import DefaultPromptTemplate
+from src.prompts.summary_prompt_template import SummaryPromptTemplate
+from src.prompts.concise_prompt_template import ConcisePromptTemplate
+from src.prompts.citation_prompt_template import CitationPromptTemplate
+
+from src.llms.llm_registry import LLMRegistry
 
 
 embedding_model = HuggingFaceEmbeddings()
@@ -45,11 +65,72 @@ retriever = SimilarityRetriever(
     vector_store=vector_store,
 )
 
-#Prompt
-prompt_template = DefaultPromptTemplate()
-
 # LLM
-llm = GroqLLM()
+# llm = GroqLLM()
+routing_llm = GroqLLM()
+
+llm_registry = LLMRegistry()
+
+groq_llm = GroqLLM()
+gemini_llm = GeminiLLM()
+ollama_llm = OllamaLLM()
+
+llm_registry.register_llm(
+    LLMTypes.GROQ,
+    groq_llm,
+)
+
+llm_registry.register_llm(
+    LLMTypes.GEMINI,
+    gemini_llm,
+)
+
+llm_registry.register_llm(
+    LLMTypes.OLLAMA,
+    ollama_llm,
+)
+
+
+prompt_router_prompt = PromptRouterPrompt()
+
+prompt_registry = PromptRegistry()
+
+#Prompt
+prompt_router = LLMPromptRouter(
+    llm=routing_llm,
+    prompt_template=prompt_router_prompt,
+    registry=prompt_registry,
+)
+
+
+prompt_registry.register_prompt(
+    DefaultPromptTemplate()
+)
+
+prompt_registry.register_prompt(
+    SummaryPromptTemplate()
+)
+
+prompt_registry.register_prompt(
+    ConcisePromptTemplate()
+)
+
+prompt_registry.register_prompt(
+    CitationPromptTemplate()
+)
+
+prompt_manager = PromptManager(
+    router=prompt_router,
+    registry=prompt_registry,
+)
+
+
+llm_router = RuleBasedLLMRouter()
+
+llm_manager = LLMManager(
+    router=llm_router,
+    registry=llm_registry,
+)
 
 
 #Reranker
@@ -64,7 +145,7 @@ token_budget_strategy = TokenBudgetStrategyFactory.create()
 # Security
 security_guard = SecurityGuardFactory.create(
     security_type=SecurityTypes.LLM,
-    llm=llm,
+    llm=routing_llm
 )
 
 # Output Guard
@@ -100,8 +181,8 @@ tool_manager = ToolManager(
 # Pipeline
 pipeline = RAGPipeline(
     retriever=retriever,
-    prompt_template=prompt_template,
-    llm=llm,
+    prompt_manager=prompt_manager,
+    llm_manager=llm_manager,
     reranker=reranker,
     context_strategy=context_strategy,
     token_budget_strategy=token_budget_strategy,
@@ -118,7 +199,8 @@ current_user = User(
 )
 
 response = pipeline.run(
-    query="Are Cart and Wishlist used here?",
+    # query="Are Cart and Wishlist used here?",
+    query="Summarize this PDF.",
     user=current_user,
 )
 
@@ -126,7 +208,8 @@ response = pipeline.run(
 #Assertions
 assert response.text
 assert len(response.text.strip()) > 0
-assert response.model == llm.model_name
+# assert response.model == llm.model_name
+assert response.model is not None
 
 # Printing Results
 

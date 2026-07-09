@@ -6,6 +6,9 @@ class ConcisePromptTemplate(BasePromptTemplate):
     Prompt template that produces short, concise answers.
     """
 
+    name = "concise"
+    description = "Use when the user requests a brief or short answer."
+
     _TEMPLATE = """
 You are a helpful AI assistant.
 

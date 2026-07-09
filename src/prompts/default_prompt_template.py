@@ -5,6 +5,9 @@ class DefaultPromptTemplate(BasePromptTemplate):
     Default prompt template for Retrieval-Augmented Generation (RAG).
     """
 
+    name = "default"
+    description = "Use for normal question answering."
+
     _TEMPLATE = """
 You are a helpful AI assistant.
 

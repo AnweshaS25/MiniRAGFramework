@@ -6,6 +6,9 @@ class SummaryPromptTemplate(BasePromptTemplate):
     Prompt template optimized for document summarization.
     """
 
+    name = "summary"
+    description = "Use when the user requests a summary or overview."
+
     _TEMPLATE = """
 You are an expert document summarizer.
 

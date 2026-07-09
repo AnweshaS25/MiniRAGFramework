@@ -27,6 +27,18 @@ class OllamaLLM(BaseLLM):
 
         self.client = Client(host=self.host)
 
+        # Default context window for local Ollama models
+        # Can later be made configurable per model
+        self._context_window = 8192
+
+
+    @property
+    def context_window(self) -> int:
+        """
+        Maximum context window supported by this model.
+        """
+        return self._context_window
+
 
     def generate(self, prompt: str, **kwargs,) -> LLMResponse:
         """

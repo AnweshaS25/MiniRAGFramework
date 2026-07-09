@@ -1,4 +1,4 @@
-from src.constants import PromptTemplateTypes
+
 
 
 class PromptRouterPrompt:
@@ -7,24 +7,24 @@ class PromptRouterPrompt:
     """
 
     @staticmethod
-    def build(query: str) -> str:
+    def build(query: str, registry) -> str:
+
+        prompt_descriptions = []
+
+        for prompt in registry.list_prompts():
+
+            prompt_descriptions.append(
+                f"- {prompt.name}: {prompt.description}"
+            )
+
+        prompts = "\n".join(prompt_descriptions)
 
         return f"""
 You are a prompt routing assistant.
 
 Available prompt templates:
 
-- {PromptTemplateTypes.DEFAULT}
-    Use for normal question answering.
-
-- {PromptTemplateTypes.CONCISE}
-    Use when the user requests a brief, short, or concise answer.
-
-- {PromptTemplateTypes.SUMMARY}
-    Use when the user asks for a summary or overview.
-
-- {PromptTemplateTypes.CITATION}
-    Use when the user asks for sources, citations, pages, or evidence.
+{prompts}
 
 Your job is to choose the BEST prompt template.
 

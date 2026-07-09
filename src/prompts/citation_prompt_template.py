@@ -6,6 +6,9 @@ class CitationPromptTemplate(BasePromptTemplate):
     Prompt template that encourages grounded answers with citations.
     """
 
+    name = "citation"
+    description = "Use when the user asks for citations, evidence, or sources."
+
     _TEMPLATE = """
 You are a Retrieval-Augmented Generation (RAG) assistant.
 

@@ -28,7 +28,7 @@ class RAGPipeline(BasePipeline):
     constructing the prompt, and generating the final answer.
     """
 
-    def __init__(self, retriever: BaseRetriever, prompt_manager,llm: BaseLLM, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard, output_guard, tool_manager: ToolManager,):
+    def __init__(self, retriever: BaseRetriever, prompt_manager, llm_manager, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard, output_guard, tool_manager: ToolManager,):
 
         if retriever is None:
             raise ValueError("retriever cannot be None.")
@@ -36,7 +36,7 @@ class RAGPipeline(BasePipeline):
         if prompt_manager is None:
             raise ValueError("prompt_template cannot be None.")
 
-        if llm is None:
+        if llm_manager is None:
             raise ValueError("llm cannot be None.")
 
         if reranker is None:
@@ -59,7 +59,7 @@ class RAGPipeline(BasePipeline):
 
         self.retriever = retriever
         self.prompt_manager = prompt_manager
-        self.llm = llm
+        self.llm_manager = llm_manager
         self.reranker = reranker
         self.context_strategy = context_strategy
         self.token_budget_strategy = token_budget_strategy
@@ -137,14 +137,14 @@ class RAGPipeline(BasePipeline):
         """
         pass
 
-    def _determine_top_k(self) -> int:
+    def _determine_top_k(self, llm) -> int:
         """
         Determine how many documents should be retrieved
         based on the LLM context window.
         """
 
         return self.context_strategy.get_top_k(
-            self.llm.context_window,
+            llm.context_window,
         )
     
 
@@ -161,14 +161,14 @@ class RAGPipeline(BasePipeline):
             )
 
 
-    def _get_context_token_budget(self) -> int:
+    def _get_context_token_budget(self, llm) -> int:
         """
         Determine how many tokens can be used
         for retrieved context.
         """
 
         return self.token_budget_strategy.get_context_token_budget(
-            self.llm.context_window,
+            llm.context_window,
         )
     
 
@@ -219,20 +219,20 @@ class RAGPipeline(BasePipeline):
 
         Do not mention that a tool was used.
         """
-
-            tool_response = self.llm.generate(
-                tool_prompt
-            )
+            
+            tool_response = self.llm_manager.get_llm(query).generate(tool_prompt)
 
             return tool_response
         
-        k = self._determine_top_k()
+        llm = self.llm_manager.get_llm(query)
+        
+        k = self._determine_top_k(llm)
         
         documents = self._retrieve_documents(query=query, user=user, k=k,)
 
         documents = self._rerank_documents(query=query, documents=documents, top_k=k,)
 
-        token_budget = self._get_context_token_budget()
+        token_budget = self._get_context_token_budget(llm)
 
         documents = self._fit_documents_to_token_budget(
             documents=documents,
@@ -257,7 +257,9 @@ class RAGPipeline(BasePipeline):
             history="",
         )
 
-        response = self._generate_response(prompt)
+        response = llm.generate(prompt)
+
+        # response = self._generate_response(prompt)
         # llm_response = self.llm.generate(prompt)
 
         output_result = self.output_guard.validate(response.text,)
