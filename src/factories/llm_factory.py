@@ -33,7 +33,7 @@ class LLMFactory:
         
         elif llm_type == LLMTypes.GEMINI:
             return GeminiLLM(
-                api_key=kwargs["api_key"],
+                api_key=kwargs.get("api_key"),
                 model=kwargs.get(
                     "model",
                     "gemini-2.5-flash",
