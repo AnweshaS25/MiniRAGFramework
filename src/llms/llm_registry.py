@@ -17,3 +17,14 @@ class LLMRegistry:
     def list_llms(self):
 
         return self._llms
+    
+
+    def list_metadata(self):
+        """
+        Returns metadata for all registered LLM plugins.
+        """
+
+        return [
+            llm.metadata
+            for llm in self._llms.values()
+        ]

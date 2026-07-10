@@ -3,6 +3,8 @@ from ollama import Client
 from src.core.llm_response import LLMResponse
 from src.llms.base_llm import BaseLLM
 
+from src.core.llm_metadata import LLMMetadata
+
 class OllamaLLM(BaseLLM):
     """
     Large Language Model implementation using Ollama.
@@ -39,6 +41,20 @@ class OllamaLLM(BaseLLM):
         """
         return self._context_window
 
+
+    @property
+    def metadata(self) -> LLMMetadata:
+        return LLMMetadata(
+            name="ollama",
+            description="Local LLM for private offline inference.",
+            strengths=[
+                "privacy",
+                "offline",
+                "local_inference",
+            ],
+            is_local=True,
+            context_window=self.context_window,
+        )
 
     def generate(self, prompt: str, **kwargs,) -> LLMResponse:
         """

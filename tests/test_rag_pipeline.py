@@ -40,6 +40,8 @@ from src.prompt_routing.llm_prompt_router import LLMPromptRouter
 
 from src.llm_routing.rule_based_llm_router import RuleBasedLLMRouter
 from src.llms.llm_manager import LLMManager
+from src.prompts.llm_router_prompt import LLMRouterPrompt
+from src.llm_routing.llm_llm_router import LLMLLMRouter
 
 from src.prompts.prompt_router_prompt import PromptRouterPrompt
 
@@ -125,7 +127,11 @@ prompt_manager = PromptManager(
 )
 
 
-llm_router = RuleBasedLLMRouter()
+llm_router = LLMLLMRouter(
+    llm=groq_llm,
+    prompt_template=LLMRouterPrompt(),
+    registry=llm_registry,
+)
 
 llm_manager = LLMManager(
     router=llm_router,
@@ -200,7 +206,9 @@ current_user = User(
 
 response = pipeline.run(
     # query="Are Cart and Wishlist used here?",
-    query="Summarize this PDF.",
+    # query="Summarize this PDF.",
+    # query="Answer this in one sentence.",
+    query="I need an offline private answer.",
     user=current_user,
 )
 

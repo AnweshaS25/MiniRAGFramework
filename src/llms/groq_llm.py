@@ -7,6 +7,8 @@ from groq import Groq
 from src.core.llm_response import LLMResponse
 from src.llms.base_llm import BaseLLM
 
+from src.core.llm_metadata import LLMMetadata
+
 class GroqLLM(BaseLLM):
     """
     Groq implementation of the BaseLLM interface.
@@ -77,3 +79,16 @@ class GroqLLM(BaseLLM):
         )
     
     
+    @property
+    def metadata(self) -> LLMMetadata:
+        return LLMMetadata(
+            name="groq",
+            description="Fast cloud LLM for reasoning, coding and summarization.",
+            strengths=[
+                "reasoning",
+                "coding",
+                "summarization",
+            ],
+            is_local=False,
+            context_window=self.context_window,
+        )

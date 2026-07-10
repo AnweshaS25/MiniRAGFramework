@@ -5,6 +5,8 @@ import os
 from src.llms.base_llm import BaseLLM
 from src.core.llm_response import LLMResponse
 
+from src.core.llm_metadata import LLMMetadata
+
 from dotenv import load_dotenv
 
 
@@ -47,6 +49,20 @@ class GeminiLLM(BaseLLM):
     @property
     def context_window(self) -> int:
         return self._context_window
+    
+    @property
+    def metadata(self) -> LLMMetadata:
+        return LLMMetadata(
+            name="gemini",
+            description="Fast cloud LLM for lightweight tasks and quick responses.",
+            strengths=[
+                "speed",
+                "general_qa",
+                "light_reasoning",
+            ],
+            is_local=False,
+            context_window=self.context_window,
+        )
 
     def generate(self, prompt: str, **kwargs,) -> LLMResponse:
         if not prompt.strip():

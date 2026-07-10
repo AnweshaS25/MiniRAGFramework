@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from src.core.llm_response import LLMResponse
+from src.core.llm_metadata import LLMMetadata
 
 class BaseLLM(ABC):
     """
@@ -11,6 +12,14 @@ class BaseLLM(ABC):
     def context_window(self) -> int:
         """
         Maximum context window supported by the model.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def metadata(self) -> LLMMetadata:
+        """
+        Metadata describing this LLM plugin.
         """
         pass
 
