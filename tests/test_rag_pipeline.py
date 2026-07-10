@@ -53,6 +53,8 @@ from src.prompts.citation_prompt_template import CitationPromptTemplate
 
 from src.llms.llm_registry import LLMRegistry
 
+from src.llm_strategies.default_fallback_strategy import DefaultFallbackStrategy
+
 
 embedding_model = HuggingFaceEmbeddings()
 
@@ -133,9 +135,12 @@ llm_router = LLMLLMRouter(
     registry=llm_registry,
 )
 
+fallback_strategy = DefaultFallbackStrategy()
+
 llm_manager = LLMManager(
     router=llm_router,
     registry=llm_registry,
+    fallback_strategy=fallback_strategy,
 )
 
 
@@ -207,8 +212,8 @@ current_user = User(
 response = pipeline.run(
     # query="Are Cart and Wishlist used here?",
     # query="Summarize this PDF.",
-    # query="Answer this in one sentence.",
-    query="I need an offline private answer.",
+    query="Answer this in one sentence.",
+    # query="I need an offline private answer.",
     user=current_user,
 )
 

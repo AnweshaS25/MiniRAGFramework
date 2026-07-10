@@ -13,6 +13,15 @@ class LLMRegistry:
     def get_llm(self, name: str):
 
         return self._llms.get(name)
+    
+    
+    def get_all_llms(self):
+        """
+        Returns all registered LLM plugins.
+        """
+
+        return self._llms
+
 
     def list_llms(self):
 

@@ -257,7 +257,28 @@ class RAGPipeline(BasePipeline):
             history="",
         )
 
-        response = llm.generate(prompt)
+        llm_chain = self.llm_manager.get_llm_chain(query)
+
+        last_exception = None
+
+        for llm in llm_chain:
+            print(f"Trying {llm.__class__.__name__}...")
+
+            try:
+                response = llm.generate(prompt)
+                print(f"Using {llm.__class__.__name__}")
+                break
+
+            except Exception as e:
+                print(f"{llm.__class__.__name__} failed: {e}")
+                last_exception = e
+
+        else:
+            raise RuntimeError(
+                f"All registered LLMs failed. Last error: {last_exception}"
+            )
+
+        # response = llm.generate(prompt)
 
         # response = self._generate_response(prompt)
         # llm_response = self.llm.generate(prompt)
