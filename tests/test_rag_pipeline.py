@@ -1,6 +1,8 @@
 from src.embeddings.huggingface_embeddings import HuggingFaceEmbeddings
 from src.vectorstores.chroma_vector_store import ChromaVectorStore
 
+from src.loaders.pdf_loader import PDFLoader
+
 from src.retrievers.similarity_retriever import SimilarityRetriever
 
 from src.prompts.default_prompt_template import DefaultPromptTemplate
@@ -67,6 +69,9 @@ from src.context_routing.rule_based_context_router import RuleBasedContextRouter
 
 from src.document_store.in_memory_document_store import InMemoryDocumentStore
 
+from src.context_routing.llm_context_router import LLMContextRouter
+from src.prompts.context_router_prompt import ContextRouterPrompt
+
 
 embedding_model = HuggingFaceEmbeddings()
 
@@ -74,6 +79,14 @@ vector_store = ChromaVectorStore(              # Connecting to the already index
     collection_name="test_indexing_pipeline",
     persist_directory="./test_chroma_db",
 )
+
+document_store = InMemoryDocumentStore()
+
+loader = PDFLoader("data/BTechProject1_Final.pdf")
+
+original_documents = loader.load()
+
+document_store.add_documents(original_documents)
 
 # Retriever
 retriever = SimilarityRetriever(
@@ -173,7 +186,11 @@ context_registry.register_strategy(
     LCMContextStrategy(),
 )
 
-context_router = RuleBasedContextRouter()
+context_router = LLMContextRouter(
+    llm=routing_llm,
+    prompt_template=ContextRouterPrompt(),
+    registry=context_registry,
+)
 
 context_manager = ContextManager(
     router=context_router,
@@ -228,6 +245,7 @@ tool_manager = ToolManager(
 # Pipeline
 pipeline = RAGPipeline(
     retriever=retriever,
+    document_store=document_store,
     prompt_manager=prompt_manager,
     llm_manager=llm_manager,
     reranker=reranker,

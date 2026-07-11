@@ -15,6 +15,13 @@ class HybridContextStrategy(BaseContextStrategy):
     necessarily load the entire corpus.
     """
 
+    name = "hybrid"
+
+    description = (
+        "Combines semantic retrieval with broader contextual information to "
+        "produce more comprehensive answers."
+    )
+
     def get_top_k(self, context_window: int) -> int:
 
         if context_window >= 500000:

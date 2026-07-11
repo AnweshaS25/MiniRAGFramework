@@ -99,6 +99,14 @@ class RAGPipeline(BasePipeline):
             k=k,
             metadata_filter=metadata_filter,
         )
+
+
+    def _load_full_documents(self, user: User,) -> List[Document]:
+        """
+        Loads the original documents from the Document Store.
+        """
+
+        return self.document_store.get_documents()
     
 
     def _rerank_documents(self, query: str, documents: List[Document], top_k: int,) -> List[Document]:
@@ -140,13 +148,13 @@ class RAGPipeline(BasePipeline):
         """
         pass
 
-    def _determine_top_k(self, query: str, llm) -> int:
+    def _determine_top_k(self, query: str, llm, context_strategy,) -> int:
         """
         Determine how many documents should be retrieved
         based on the LLM context window.
         """
 
-        context_strategy = self.context_manager.get_strategy(query)
+        # context_strategy = self.context_manager.get_strategy(query)
 
         return context_strategy.get_top_k(
             llm.context_window,
@@ -198,15 +206,14 @@ class RAGPipeline(BasePipeline):
         return selected_documents
     
 
-    def _load_full_documents(self, user: User,) -> List[Document]:
-        pass
-
 
     def run(self, query: str, user: User,) -> LLMResponse:
         if not query.strip():
             raise ValueError("Query cannot be empty.")
         
         self._validate_query(query)
+
+        context_strategy = self.context_manager.get_strategy(query)
 
         tool_used, tool_result = self.tool_manager.process(
             user_query=query,
@@ -236,14 +243,12 @@ class RAGPipeline(BasePipeline):
         llm = self.llm_manager.get_llm(query)
         
 
-
-        context_strategy = self.context_manager.get_strategy(query)
-
         if context_strategy.requires_retrieval():
 
             k = self._determine_top_k(
                 query=query,
                 llm=llm,
+                context_strategy=context_strategy,
             )
         
             documents = self._retrieve_documents(
@@ -259,6 +264,7 @@ class RAGPipeline(BasePipeline):
             )
 
         else:
+            print("Using Document Store (LCM Mode)")
             documents = self._load_full_documents(user)
 
 
@@ -276,7 +282,6 @@ class RAGPipeline(BasePipeline):
                 "You do not have permission to access any relevant documents."
             )
 
-        context_strategy = self.context_manager.get_strategy(query)
         context = context_strategy.build_context(documents)
         
         # context = self._build_context(documents)

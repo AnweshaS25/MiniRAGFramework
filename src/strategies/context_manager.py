@@ -14,15 +14,22 @@ class ContextManager:
 
     def get_strategy(self, query: str,):
 
+        context_request = self.router.route(query)
+
+        if context_request is None:
+            raise ValueError(
+                "Context router failed to select a strategy."
+            )
+
         strategy_name = self.router.route(query)
 
         print(f"Context Router selected: {strategy_name}")
 
-        strategy = self.registry.get_strategy(strategy_name)
+        strategy = self.registry.get_strategy(context_request.context_strategy)
 
         if strategy is None:
             raise ValueError(
-                f"Context strategy '{strategy_name}' is not registered."
+                f"Unknown context strategy '{context_request.context_strategy}'."
             )
 
         return strategy

@@ -14,6 +14,13 @@ class LCMContextStrategy(BaseContextStrategy):
     whenever the model context window allows.
     """
 
+    name = "lcm"
+
+    description = (
+        "Loads the original documents directly from the Document Store without "
+        "performing chunk retrieval."
+    )
+
     def get_top_k(self, context_window: int) -> int:
         """
         For LCMs, retrieve a very large number of chunks.

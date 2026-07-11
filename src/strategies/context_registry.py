@@ -16,4 +16,4 @@ class ContextRegistry:
         return self._strategies.get(name)
 
     def list_strategies(self):
-        return self._strategies
+        return list(self._strategies.values())

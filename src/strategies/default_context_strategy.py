@@ -9,6 +9,13 @@ class DefaultContextStrategy(BaseContextStrategy):
     based on the LLM context window.
     """
 
+    name = "default"
+
+    description = (
+        "Uses semantic retrieval from the vector store to retrieve the most "
+        "relevant chunks before answering."
+    )
+
     def get_top_k(self, context_window: int,) -> int:
 
         if context_window <= 8_000:
