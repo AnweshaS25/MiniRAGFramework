@@ -21,6 +21,8 @@ from src.auth.metadata_filter_builder import MetadataFilterBuilder
 from src.tools.tool_manager import ToolManager
 from src.prompts.prompt_manager import PromptManager
 
+from src.strategies.context_manager import ContextManager
+
 
 class RAGPipeline(BasePipeline):
     """
@@ -28,7 +30,7 @@ class RAGPipeline(BasePipeline):
     constructing the prompt, and generating the final answer.
     """
 
-    def __init__(self, retriever: BaseRetriever, prompt_manager, llm_manager, reranker: BaseReranker, context_strategy: BaseContextStrategy, token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard, output_guard, tool_manager: ToolManager,):
+    def __init__(self, retriever: BaseRetriever, prompt_manager, llm_manager, reranker: BaseReranker, context_manager,token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard, output_guard, tool_manager: ToolManager,):
 
         if retriever is None:
             raise ValueError("retriever cannot be None.")
@@ -42,8 +44,8 @@ class RAGPipeline(BasePipeline):
         if reranker is None:
             raise ValueError("reranker cannot be None.")
         
-        if context_strategy is None:
-            raise ValueError("context_strategy cannot be None.")
+        if context_manager is None:
+            raise ValueError("context_manager cannot be None.")
         
         if token_budget_strategy is None:
             raise ValueError("token_budget_strategy cannot be None.")
@@ -61,7 +63,7 @@ class RAGPipeline(BasePipeline):
         self.prompt_manager = prompt_manager
         self.llm_manager = llm_manager
         self.reranker = reranker
-        self.context_strategy = context_strategy
+        self.context_manager = context_manager
         self.token_budget_strategy = token_budget_strategy
         self.security_guard = security_guard
         self.output_guard = output_guard
@@ -137,13 +139,15 @@ class RAGPipeline(BasePipeline):
         """
         pass
 
-    def _determine_top_k(self, llm) -> int:
+    def _determine_top_k(self, query: str, llm) -> int:
         """
         Determine how many documents should be retrieved
         based on the LLM context window.
         """
 
-        return self.context_strategy.get_top_k(
+        context_strategy = self.context_manager.get_strategy(query)
+
+        return context_strategy.get_top_k(
             llm.context_window,
         )
     
@@ -226,7 +230,10 @@ class RAGPipeline(BasePipeline):
         
         llm = self.llm_manager.get_llm(query)
         
-        k = self._determine_top_k(llm)
+        k = self._determine_top_k(
+            query=query,
+            llm=llm,
+        )
         
         documents = self._retrieve_documents(query=query, user=user, k=k,)
 

@@ -56,6 +56,16 @@ from src.llms.llm_registry import LLMRegistry
 from src.llm_strategies.default_fallback_strategy import DefaultFallbackStrategy
 
 
+from src.strategies.context_registry import ContextRegistry
+from src.strategies.context_manager import ContextManager
+
+from src.strategies.default_context_strategy import DefaultContextStrategy
+from src.strategies.hybrid_context_strategy import HybridContextStrategy
+from src.strategies.lcm_context_strategy import LCMContextStrategy
+
+from src.context_routing.rule_based_context_router import RuleBasedContextRouter
+
+
 embedding_model = HuggingFaceEmbeddings()
 
 vector_store = ChromaVectorStore(              # Connecting to the already indexed database
@@ -144,6 +154,30 @@ llm_manager = LLMManager(
 )
 
 
+context_registry = ContextRegistry()
+
+context_registry.register_strategy(
+    "default",
+    DefaultContextStrategy(),
+)
+
+context_registry.register_strategy(
+    "hybrid",
+    HybridContextStrategy(),
+)
+
+context_registry.register_strategy(
+    "lcm",
+    LCMContextStrategy(),
+)
+
+context_router = RuleBasedContextRouter()
+
+context_manager = ContextManager(
+    router=context_router,
+    registry=context_registry,
+)
+
 #Reranker
 reranker = RerankerFactory.create(RerankerTypes.NONE,)
 
@@ -195,7 +229,7 @@ pipeline = RAGPipeline(
     prompt_manager=prompt_manager,
     llm_manager=llm_manager,
     reranker=reranker,
-    context_strategy=context_strategy,
+    context_manager=context_manager,
     token_budget_strategy=token_budget_strategy,
     security_guard=security_guard,
     output_guard=output_guard,
@@ -212,8 +246,10 @@ current_user = User(
 response = pipeline.run(
     # query="Are Cart and Wishlist used here?",
     # query="Summarize this PDF.",
-    query="Answer this in one sentence.",
+    # query="Answer this in one sentence.",
     # query="I need an offline private answer.",
+    # query="Compare the functional and non-functional requirements.",
+    query="What database is used?",
     user=current_user,
 )
 
