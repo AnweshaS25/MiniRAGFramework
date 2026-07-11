@@ -30,7 +30,7 @@ class RAGPipeline(BasePipeline):
     constructing the prompt, and generating the final answer.
     """
 
-    def __init__(self, retriever: BaseRetriever, prompt_manager, llm_manager, reranker: BaseReranker, context_manager,token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard, output_guard, tool_manager: ToolManager,):
+    def __init__(self, retriever: BaseRetriever, prompt_manager, document_store,llm_manager, reranker: BaseReranker, context_manager,token_budget_strategy: BaseTokenBudgetStrategy, security_guard: BaseGuard, output_guard, tool_manager: ToolManager,):
 
         if retriever is None:
             raise ValueError("retriever cannot be None.")
@@ -61,6 +61,7 @@ class RAGPipeline(BasePipeline):
 
         self.retriever = retriever
         self.prompt_manager = prompt_manager
+        self.document_store = document_store
         self.llm_manager = llm_manager
         self.reranker = reranker
         self.context_manager = context_manager
@@ -69,20 +70,20 @@ class RAGPipeline(BasePipeline):
         self.output_guard = output_guard
         self.tool_manager = tool_manager
 
-    def _build_context(self, documents: List[Document],) -> str:
-        context_parts = []
+    # def _build_context(self, documents: List[Document],) -> str:
+    #     context_parts = []
 
-        for document in documents:
-            source = document.metadata.get("source", "Unknown")
-            page = document.metadata.get("page", "Unknown")
+    #     for document in documents:
+    #         source = document.metadata.get("source", "Unknown")
+    #         page = document.metadata.get("page", "Unknown")
 
-            context_parts.append(
-                f"Source: {source}\n"
-                f"Page: {page}\n\n"
-                f"{document.content}"
-            )
+    #         context_parts.append(
+    #             f"Source: {source}\n"
+    #             f"Page: {page}\n\n"
+    #             f"{document.content}"
+    #         )
 
-        return "\n\n----------------------------------------\n\n".join(context_parts)
+    #     return "\n\n----------------------------------------\n\n".join(context_parts)
         
 
     def _retrieve_documents(self, query: str, user: User, k: int,) -> List[Document]:
@@ -195,6 +196,10 @@ class RAGPipeline(BasePipeline):
                 break
 
         return selected_documents
+    
+
+    def _load_full_documents(self, user: User,) -> List[Document]:
+        pass
 
 
     def run(self, query: str, user: User,) -> LLMResponse:
@@ -230,14 +235,33 @@ class RAGPipeline(BasePipeline):
         
         llm = self.llm_manager.get_llm(query)
         
-        k = self._determine_top_k(
-            query=query,
-            llm=llm,
-        )
-        
-        documents = self._retrieve_documents(query=query, user=user, k=k,)
 
-        documents = self._rerank_documents(query=query, documents=documents, top_k=k,)
+
+        context_strategy = self.context_manager.get_strategy(query)
+
+        if context_strategy.requires_retrieval():
+
+            k = self._determine_top_k(
+                query=query,
+                llm=llm,
+            )
+        
+            documents = self._retrieve_documents(
+                query=query, 
+                user=user, 
+                k=k,
+            )
+
+            documents = self._rerank_documents(
+                query=query, 
+                documents=documents, 
+                top_k=k,
+            )
+
+        else:
+            documents = self._load_full_documents(user)
+
+
 
         token_budget = self._get_context_token_budget(llm)
 
@@ -252,7 +276,8 @@ class RAGPipeline(BasePipeline):
                 "You do not have permission to access any relevant documents."
             )
 
-        context = self._build_context(documents)
+        context_strategy = self.context_manager.get_strategy(query)
+        context = context_strategy.build_context(documents)
         
         # context = self._build_context(documents)
 

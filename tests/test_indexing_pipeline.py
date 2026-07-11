@@ -4,6 +4,7 @@ from src.embeddings.huggingface_embeddings import HuggingFaceEmbeddings
 from src.vectorstores.chroma_vector_store import ChromaVectorStore
 
 from src.pipelines.indexing_pipeline import IndexingPipeline
+from src.document_store.in_memory_document_store import InMemoryDocumentStore
 
 def main():
     print("Inside main")
@@ -19,17 +20,22 @@ def main():
         persist_directory="./test_chroma_db",
     )
 
+    document_store = InMemoryDocumentStore()
+
 
     pipeline = IndexingPipeline(
         loader=loader,
         splitter=splitter,
         embedding_model=embedding_model,
         vector_store=vector_store,
+        document_store=document_store,
     )
 
     print("Running indexing pipeline...\n")
 
     chunks = pipeline.run()
+
+    print(f"Original pages stored: {len(document_store.get_documents())}")
 
     for chunk in chunks:
         chunk.metadata["permission"] = "VIEW_HR_DOCUMENTS"

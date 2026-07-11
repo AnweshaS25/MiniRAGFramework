@@ -65,6 +65,8 @@ from src.strategies.lcm_context_strategy import LCMContextStrategy
 
 from src.context_routing.rule_based_context_router import RuleBasedContextRouter
 
+from src.document_store.in_memory_document_store import InMemoryDocumentStore
+
 
 embedding_model = HuggingFaceEmbeddings()
 
@@ -245,11 +247,11 @@ current_user = User(
 
 response = pipeline.run(
     # query="Are Cart and Wishlist used here?",
-    # query="Summarize this PDF.",
+    query="Summarize this PDF.",
     # query="Answer this in one sentence.",
     # query="I need an offline private answer.",
     # query="Compare the functional and non-functional requirements.",
-    query="What database is used?",
+    # query="What database is used?",
     user=current_user,
 )
 

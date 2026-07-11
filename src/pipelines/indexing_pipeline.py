@@ -10,17 +10,20 @@ from src.splitters.base_splitter import BaseSplitter
 from src.embeddings.base_embeddings import BaseEmbeddings
 from src.vectorstores.base_vector_store import BaseVectorStore
 
+from src.document_store.base_document_store import BaseDocumentStore
+
 class IndexingPipeline(BasePipeline):
     """
     Pipeline responsible for loading, splitting,
     embedding, and indexing documents.
     """
 
-    def __init__(self, loader: BaseLoader, splitter: BaseSplitter, embedding_model: BaseEmbeddings, vector_store: BaseVectorStore):
+    def __init__(self, loader: BaseLoader, splitter: BaseSplitter, embedding_model: BaseEmbeddings, vector_store: BaseVectorStore, document_store: BaseDocumentStore,):
         self.loader = loader
         self.splitter = splitter
         self.embedding_model = embedding_model
         self.vector_store = vector_store    
+        self.document_store = document_store
 
 
     def run(self, metadata: dict | None = None,) -> List[Document]:
@@ -29,6 +32,9 @@ class IndexingPipeline(BasePipeline):
 
         if not documents:
             raise ValueError("No documents were loaded.")
+        
+        # Store the original pages before splitting
+        self.document_store.add_documents(documents)
 
         chunks = self.splitter.split(documents)
 

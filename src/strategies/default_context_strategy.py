@@ -1,4 +1,6 @@
 from src.strategies.base_context_strategy import BaseContextStrategy
+from typing import List
+from src.core.document import Document
 
 
 class DefaultContextStrategy(BaseContextStrategy):
@@ -19,3 +21,33 @@ class DefaultContextStrategy(BaseContextStrategy):
             return 20
 
         return 40
+    
+    def build_context(self, documents: List[Document],) -> str:
+
+        context_parts = []
+
+        for document in documents:
+
+            source = document.metadata.get(
+                "source",
+                "Unknown",
+            )
+
+            page = document.metadata.get(
+                "page",
+                "Unknown",
+            )
+
+            context_parts.append(
+                f"Source: {source}\n"
+                f"Page: {page}\n\n"
+                f"{document.content}"
+            )
+
+        return "\n\n----------------------------------------\n\n".join(
+            context_parts
+        )
+    
+
+    def requires_retrieval(self):
+        return True
