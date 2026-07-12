@@ -4,6 +4,8 @@ from collections import defaultdict
 from typing import List
 from src.core.document import Document
 
+from src.utils.token_estimator import TokenEstimator
+
 
 class HybridContextStrategy(BaseContextStrategy):
     """
@@ -45,7 +47,7 @@ class HybridContextStrategy(BaseContextStrategy):
 
         for page in pages:
 
-            estimated_tokens = len(page.content) // 4
+            estimated_tokens = TokenEstimator.estimate(page.content)
 
             if estimated_tokens <= remaining_budget:
                 selected.append(page)

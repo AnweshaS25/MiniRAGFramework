@@ -1,19 +1,24 @@
+from transformers import AutoTokenizer
+
+
 class TokenEstimator:
     """
-    Utility for estimating the number of tokens in text.
-
-    This is a lightweight approximation.
-
-    Later we can replace this with model-specific tokenizers
-    like tiktoken or HuggingFace tokenizers.
+    Estimates tokens using the same tokenizer
+    family as the embedding model.
     """
 
-    @staticmethod
-    def estimate(text: str) -> int:
+    _tokenizer = AutoTokenizer.from_pretrained(
+        "sentence-transformers/all-MiniLM-L6-v2"
+    )
 
+    @classmethod
+    def estimate(cls, text: str) -> int:
         if not text:
             return 0
 
-        # Approximation:
-        # 1 token ≈ 4 characters
-        return max(1, len(text) // 4)
+        return len(
+            cls._tokenizer.encode(
+                text,
+                add_special_tokens=False,
+            )
+        )
