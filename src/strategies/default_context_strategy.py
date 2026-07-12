@@ -29,11 +29,15 @@ class DefaultContextStrategy(BaseContextStrategy):
 
         return 40
     
-    def build_context(self, documents: List[Document],) -> str:
+    def build_context(
+            self, 
+            retrieved_chunks: List[Document],
+            original_documents: List[Document] | None = None,
+    ) -> str:
 
         context_parts = []
 
-        for document in documents:
+        for document in retrieved_chunks:
 
             source = document.metadata.get(
                 "source",

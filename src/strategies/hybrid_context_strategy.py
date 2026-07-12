@@ -34,11 +34,15 @@ class HybridContextStrategy(BaseContextStrategy):
             return 50
         
     
-    def build_context(self, documents: List[Document],) -> str:
+    def build_context(
+            self, 
+            retrieved_chunks: List[Document], 
+            original_documents: List[Document] | None = None,
+    ) -> str:
 
         grouped = defaultdict(list)
 
-        for document in documents:
+        for document in retrieved_chunks:
 
             source = document.metadata.get("source", "Unknown")
             page = document.metadata.get("page", "Unknown")
@@ -47,20 +51,53 @@ class HybridContextStrategy(BaseContextStrategy):
 
             grouped[key].append(document.content)
 
-        context_parts = []
+        retrieved_parts = []
 
         for (source, page), chunks in grouped.items():
 
             merged_text = "\n\n".join(chunks)
 
-            context_parts.append(
+            retrieved_parts.append(
                 f"===== {source} | Page {page} =====\n\n"
                 f"{merged_text}"
             )
 
-        return "\n\n----------------------------------------\n\n".join(
-            context_parts
+        retrieved_context = "\n\n----------------------------------------\n\n".join(
+            retrieved_parts
         )
+
+        if not original_documents:
+            return retrieved_context
+        
+        original_parts = []
+
+        for document in original_documents:
+
+            source = document.metadata.get("source", "Unknown")
+            page = document.metadata.get("page", "Unknown")
+
+            original_parts.append(
+                f"===== {source} | Page {page} =====\n\n"
+                f"{document.content}"
+            )
+
+        original_context = "\n\n----------------------------------------\n\n".join(
+            original_parts
+        )
+
+        return f"""
+==============================
+Retrieved Relevant Chunks
+==============================
+
+{retrieved_context}
+
+==============================
+Original Document Context
+==============================
+
+{original_context}
+"""
     
 
     def requires_retrieval(self):

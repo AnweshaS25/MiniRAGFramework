@@ -265,10 +265,10 @@ current_user = User(
 
 response = pipeline.run(
     # query="Are Cart and Wishlist used here?",
-    query="Summarize this PDF.",
+    # query="Summarize this PDF.",
     # query="Answer this in one sentence.",
     # query="I need an offline private answer.",
-    # query="Compare the functional and non-functional requirements.",
+    query="Compare the functional and non-functional requirements.",
     # query="What database is used?",
     user=current_user,
 )

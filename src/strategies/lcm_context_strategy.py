@@ -31,11 +31,15 @@ class LCMContextStrategy(BaseContextStrategy):
         return 100000
     
 
-    def build_context(self, documents: List[Document],) -> str:
+    def build_context(
+            self, 
+            retrieved_chunks: List[Document],
+            original_documents: List[Document] | None = None,
+    ) -> str:
 
         grouped = defaultdict(dict)
 
-        for document in documents:
+        for document in retrieved_chunks:
 
             source = document.metadata.get("source", "Unknown")
             page = document.metadata.get("page", 0)

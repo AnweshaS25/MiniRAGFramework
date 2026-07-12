@@ -245,6 +245,8 @@ class RAGPipeline(BasePipeline):
 
         if context_strategy.requires_retrieval():
 
+            original_documents = None
+
             k = self._determine_top_k(
                 query=query,
                 llm=llm,
@@ -263,9 +265,14 @@ class RAGPipeline(BasePipeline):
                 top_k=k,
             )
 
+            if context_strategy.name == "hybrid":
+                print("Loading original documents for Hybrid Mode")
+                original_documents = self._load_full_documents(user)
+
         else:
             print("Using Document Store (LCM Mode)")
             documents = self._load_full_documents(user)
+            original_documents = None
 
 
 
@@ -282,7 +289,10 @@ class RAGPipeline(BasePipeline):
                 "You do not have permission to access any relevant documents."
             )
 
-        context = context_strategy.build_context(documents)
+        context = context_strategy.build_context(
+            retrieved_chunks=documents,
+            original_documents=original_documents,
+        )
         
         # context = self._build_context(documents)
 
