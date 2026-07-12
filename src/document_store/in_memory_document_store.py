@@ -32,6 +32,21 @@ class InMemoryDocumentStore(BaseDocumentStore):
                 filtered.append(document)
 
         return filtered
+    
+
+    def get_page(self, source: str, page: int,) -> Document | None:
+
+        for document in self._documents:
+
+            if (
+                document.metadata.get("source") == source
+                and
+                document.metadata.get("page") == page
+            ):
+                return document
+
+        return None
+
 
     def clear(self):
 

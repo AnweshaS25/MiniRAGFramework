@@ -33,6 +33,28 @@ class HybridContextStrategy(BaseContextStrategy):
         else:
             return 50
         
+
+    def fit_pages_to_budget(self, pages: List[Document], token_budget: int,) -> List[Document]:
+        """
+        Keep only the highest-ranked pages that fit
+        within the token budget.
+        """
+
+        selected = []
+        remaining_budget = token_budget
+
+        for page in pages:
+
+            estimated_tokens = len(page.content) // 4
+
+            if estimated_tokens <= remaining_budget:
+                selected.append(page)
+                remaining_budget -= estimated_tokens
+            else:
+                break
+
+        return selected
+        
     
     def build_context(
             self, 
@@ -85,19 +107,7 @@ class HybridContextStrategy(BaseContextStrategy):
             original_parts
         )
 
-        return f"""
-==============================
-Retrieved Relevant Chunks
-==============================
-
-{retrieved_context}
-
-==============================
-Original Document Context
-==============================
-
-{original_context}
-"""
+        return original_context
     
 
     def requires_retrieval(self):

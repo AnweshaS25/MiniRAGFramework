@@ -43,6 +43,9 @@ class GroqLLM(BaseLLM):
 
     @property
     def context_window(self) -> int:
+        """
+        Maximum context window supported by this model.
+        """
         return self._context_window
 
 

@@ -17,6 +17,15 @@ class BaseDocumentStore(ABC):
     def get_documents(self, metadata_filter: dict | None = None,) -> List[Document]:
         pass
 
+
+    @abstractmethod
+    def get_page(self, source: str, page: int,) -> Document | None:
+        """
+        Return the original page corresponding
+        to a source and page number.
+        """
+        pass
+
     @abstractmethod
     def clear(self) -> None:
         pass

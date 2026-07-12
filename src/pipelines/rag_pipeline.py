@@ -23,6 +23,11 @@ from src.prompts.prompt_manager import PromptManager
 
 from src.strategies.context_manager import ContextManager
 
+from src.utils.context_budget_manager import ContextBudgetManager
+from src.utils.token_estimator import TokenEstimator
+
+from src.utils.page_ranker import PageRanker
+
 
 class RAGPipeline(BasePipeline):
     """
@@ -69,6 +74,7 @@ class RAGPipeline(BasePipeline):
         self.security_guard = security_guard
         self.output_guard = output_guard
         self.tool_manager = tool_manager
+        self.context_budget_manager = ContextBudgetManager()
 
     # def _build_context(self, documents: List[Document],) -> str:
     #     context_parts = []
@@ -107,6 +113,52 @@ class RAGPipeline(BasePipeline):
         """
 
         return self.document_store.get_documents()
+    
+
+    def _load_original_pages(self, retrieved_chunks: List[Document],) -> List[Document]:
+        """
+        Load the original pages corresponding to
+        the retrieved chunks.
+        """
+
+        original_pages = []
+
+        ranked_pages = PageRanker.rank_pages(retrieved_chunks)
+
+        for source, page in ranked_pages:
+            original = self.document_store.get_page(
+                source=source,
+                page=page,
+            )
+
+            if original is not None:
+                original_pages.append(original)
+
+        return original_pages
+
+        # seen = set()
+
+        # for chunk in retrieved_chunks:
+
+        #     source = chunk.metadata.get("source")
+        #     page = chunk.metadata.get("page")
+
+        #     key = (source, page)
+
+        #     if key in seen:
+        #         continue
+
+        #     seen.add(key)
+
+        #     original = self.document_store.get_page(
+        #         source=source,
+        #         page=page,
+        #     )
+
+        #     if original is not None:
+        #         original_pages.append(original)
+
+        # return original_pages
     
 
     def _rerank_documents(self, query: str, documents: List[Document], top_k: int,) -> List[Document]:
@@ -194,8 +246,7 @@ class RAGPipeline(BasePipeline):
         remaining_budget = token_budget
 
         for document in documents:
-            estimated_tokens = len(document.content) // 4
-
+            estimated_tokens = TokenEstimator.estimate(document.content)
             if estimated_tokens <= remaining_budget:
                 selected_documents.append(document)
                 remaining_budget -= estimated_tokens
@@ -266,8 +317,8 @@ class RAGPipeline(BasePipeline):
             )
 
             if context_strategy.name == "hybrid":
-                print("Loading original documents for Hybrid Mode")
-                original_documents = self._load_full_documents(user)
+                print("Loading original pages for Hybrid Mode")
+                original_documents = self._load_original_pages(documents,)
 
         else:
             print("Using Document Store (LCM Mode)")
@@ -278,10 +329,17 @@ class RAGPipeline(BasePipeline):
 
         token_budget = self._get_context_token_budget(llm)
 
-        documents = self._fit_documents_to_token_budget(
-            documents=documents,
-            token_budget=token_budget,
-        )
+        if context_strategy.name == "hybrid":
+            original_documents = context_strategy.fit_pages_to_budget(
+                pages=original_documents,
+                token_budget=token_budget,
+            )
+
+        else:
+            documents = self._fit_documents_to_token_budget(
+                documents=documents,
+                token_budget=token_budget,
+            )
 
 
         if not documents:
