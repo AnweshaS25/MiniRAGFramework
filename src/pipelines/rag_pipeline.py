@@ -226,14 +226,19 @@ class RAGPipeline(BasePipeline):
             )
 
 
-    def _get_context_token_budget(self, llm) -> int:
+    def _get_context_token_budget(
+        self, 
+        llm,
+        prompt_tokens: int | None = None,
+    ) -> int:
         """
         Determine how many tokens can be used
         for retrieved context.
         """
 
         return self.token_budget_strategy.get_context_token_budget(
-            llm.context_window,
+            context_window=llm.context_window,
+            prompt_tokens=prompt_tokens,
         )
     
 
@@ -255,6 +260,71 @@ class RAGPipeline(BasePipeline):
                 break
 
         return selected_documents
+    
+
+
+    def _prepare_prompt(self, query: str, context_strategy, documents, original_documents, prompt_template, llm,):
+        """
+        Build the final prompt while respecting
+        the LLM context window.
+        """
+        # ------------------------
+        # First attempt
+        # ------------------------
+
+        empty_prompt = prompt_template.format(
+            question=query,
+            context="",
+            history="",
+        )
+
+        prompt_tokens = TokenEstimator.estimate(empty_prompt)
+
+        token_budget = self._get_context_token_budget(
+            llm,
+            prompt_tokens=prompt_tokens,
+        )
+
+        print(f"Estimated prompt tokens: {prompt_tokens}")
+        print(f"Available context budget: {token_budget}")
+
+        # ------------------------
+        # Refit context to budget
+        # ------------------------
+
+        if context_strategy.name == "hybrid":
+
+            original_documents = context_strategy.fit_pages_to_budget(
+                pages=original_documents,
+                token_budget=token_budget,
+            )
+
+        else:
+
+            documents = self._fit_documents_to_token_budget(
+                documents=documents,
+                token_budget=token_budget,
+            )
+
+        # ------------------------
+        # Build final prompt
+        # ------------------------
+
+        context = context_strategy.build_context(
+            retrieved_chunks=documents,
+            original_documents=original_documents,
+        )
+
+        prompt = prompt_template.format(
+            question=query,
+            context=context,
+            history="",
+        )
+
+        final_prompt_tokens = TokenEstimator.estimate(prompt)
+        print(f"Final prompt estimate: {final_prompt_tokens}")
+
+        return prompt
     
 
 
@@ -326,41 +396,34 @@ class RAGPipeline(BasePipeline):
             original_documents = None
 
 
-
-        token_budget = self._get_context_token_budget(llm)
-
-        if context_strategy.name == "hybrid":
-            original_documents = context_strategy.fit_pages_to_budget(
-                pages=original_documents,
-                token_budget=token_budget,
-            )
-
-        else:
-            documents = self._fit_documents_to_token_budget(
-                documents=documents,
-                token_budget=token_budget,
-            )
-
-
         if not documents:
             raise PermissionError(
                 "You do not have permission to access any relevant documents."
             )
 
-        context = context_strategy.build_context(
-            retrieved_chunks=documents,
-            original_documents=original_documents,
-        )
+        # context = context_strategy.build_context(
+        #     retrieved_chunks=documents,
+        #     original_documents=original_documents,
+        # )
         
         # context = self._build_context(documents)
 
         prompt_template = self.prompt_manager.get_prompt_template(query)
 
-        prompt = prompt_template.format(
-            question=query,
-            context=context,
-            history="",
+        prompt = self._prepare_prompt(
+            query=query,
+            context_strategy=context_strategy,
+            documents=documents,
+            original_documents=original_documents,
+            prompt_template=prompt_template,
+            llm=llm,
         )
+
+        # prompt = prompt_template.format(
+        #     question=query,
+        #     context=context,
+        #     history="",
+        # )
 
         llm_chain = self.llm_manager.get_llm_chain(query)
 

@@ -16,11 +16,21 @@ class DefaultTokenBudgetStrategy(BaseTokenBudgetStrategy):
         self.prompt_tokens = prompt_tokens
         self.response_tokens = response_tokens
 
-    def get_context_token_budget(self, context_window: int,) -> int:
+    def get_context_token_budget(
+            self, 
+            context_window: int,
+            prompt_tokens: int | None = None,
+    ) -> int:
+
+        prompt_tokens = (
+            prompt_tokens
+            if prompt_tokens is not None
+            else self.prompt_tokens
+        )
 
         budget = (
             context_window
-            - self.prompt_tokens
+            - prompt_tokens
             - self.response_tokens
         )
 
