@@ -13,6 +13,7 @@ from src.llms.ollama_llm import OllamaLLM
 
 from src.pipelines.conversational_rag_pipeline import ConversationalRAGPipeline
 from src.memory.conversation_buffer_memory import ConversationBufferMemory
+from src.memory.summary_memory import SummaryMemory
 
 from src.factories.reranker_factory import RerankerFactory
 from src.constants import RerankerTypes
@@ -241,9 +242,19 @@ tool_router = RuleBasedToolRouter()
 tool_manager = ToolManager(
     router=tool_router,
     executor=tool_executor,
+) 
+
+llm = OllamaLLM(
+    model="llama3.2",
 )
 
-memory = ConversationBufferMemory()
+
+# memory = ConversationBufferMemory()
+
+memory = SummaryMemory(
+    llm=llm,
+    summarize_after=6,
+)
 
 # Pipeline
 pipeline = ConversationalRAGPipeline(
@@ -312,6 +323,19 @@ print("=" * 80)
 
 response = pipeline.run(
     query="Summarize everything we have discussed so far.",
+    user=current_user,
+)
+
+print(response.text)
+
+
+print("\n")
+print("=" * 80)
+print("Question 4")
+print("=" * 80)
+
+response = pipeline.run(
+    query="Which database did you recommend?",
     user=current_user,
 )
 
