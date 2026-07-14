@@ -173,15 +173,22 @@ class RAGPipeline(BasePipeline):
         )
     
 
-    def _build_prompt(self, question: str, context: str,) -> str:
+    def _build_prompt(
+        self, 
+        question: str, 
+        context: str,
+    ) -> str:
         """
         Construct the prompt for the LLM.
         """
 
-        return self.prompt_template.format(
-            question=question,
-            context=context,
-        )
+        prompt_template = self.prompt_manager.get_prompt_template(question)
+
+        return prompt_template.format(
+        question=question,
+        context=context,
+        history="",
+    )
     
 
     def _generate_response(self, prompt: str,) -> LLMResponse:
@@ -315,10 +322,10 @@ class RAGPipeline(BasePipeline):
             original_documents=original_documents,
         )
 
-        prompt = prompt_template.format(
+
+        prompt = self._build_prompt(
             question=query,
             context=context,
-            history="",
         )
 
         final_prompt_tokens = TokenEstimator.estimate(prompt)
