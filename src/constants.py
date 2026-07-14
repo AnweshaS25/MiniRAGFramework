@@ -49,6 +49,7 @@ class PromptTemplateTypes:
 class MemoryTypes:
     CONVERSATION_BUFFER = "conversation_buffer"
     CONVERSATION_WINDOW = "conversation_window"
+    SUMMARY = "summary"
 
 
 class RerankerTypes:
