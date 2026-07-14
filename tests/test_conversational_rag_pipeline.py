@@ -305,6 +305,19 @@ response = pipeline.run(
 print(response.text)
 
 
+print("\n")
+print("=" * 80)
+print("Question 3")
+print("=" * 80)
+
+response = pipeline.run(
+    query="Summarize everything we have discussed so far.",
+    user=current_user,
+)
+
+print(response.text)
+
+
 
 
 #Assertions
