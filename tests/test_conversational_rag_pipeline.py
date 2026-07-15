@@ -13,6 +13,7 @@ from src.llms.ollama_llm import OllamaLLM
 
 from src.pipelines.conversational_rag_pipeline import ConversationalRAGPipeline
 from src.memory.conversation_buffer_memory import ConversationBufferMemory
+from src.memory.conversation_window_memory import ConversationWindowMemory
 from src.memory.summary_memory import SummaryMemory
 
 from src.factories.reranker_factory import RerankerFactory
@@ -253,12 +254,23 @@ llm = OllamaLLM(
 
 # memory = ConversationBufferMemory()
 
+
+buffer_memory = ConversationBufferMemory()
+
+window_memory = ConversationWindowMemory(
+    window_size=2,
+)
+
 summary_memory = SummaryMemory(
-    llm=llm,
+    llm=routing_llm,
     summarize_after=6,
 )
 
-memory = MemoryManager(summary_memory)
+memory = MemoryManager(
+    buffer_memory=buffer_memory,
+    window_memory=window_memory,
+    summary_memory=summary_memory,
+)
 
 # Pipeline
 pipeline = ConversationalRAGPipeline(
@@ -387,7 +399,7 @@ print("=" * 80)
 print("Conversation Memory")
 print("=" * 80)
 
-print(memory.get_context())
+print(memory.get_full_history())
 
 
 print("RAGPipeline test passed!")
