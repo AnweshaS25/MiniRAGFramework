@@ -1,5 +1,6 @@
 from src.memory.base_memory import BaseMemory
 from src.pipelines.rag_pipeline import RAGPipeline
+from src.memory.memory_manager import MemoryManager
 
 from src.retrievers.base_retriever import BaseRetriever
 from src.prompts.base_prompt_template import BasePromptTemplate
@@ -25,7 +26,7 @@ class ConversationalRAGPipeline(RAGPipeline):
         security_guard,
         output_guard,
         tool_manager,
-        memory,
+        memory: MemoryManager,
     ):
 
         super().__init__(

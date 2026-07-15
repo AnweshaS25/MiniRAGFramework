@@ -74,6 +74,8 @@ from src.document_store.in_memory_document_store import InMemoryDocumentStore
 from src.context_routing.llm_context_router import LLMContextRouter
 from src.prompts.context_router_prompt import ContextRouterPrompt
 
+from src.memory.memory_manager import MemoryManager
+
 
 embedding_model = HuggingFaceEmbeddings()
 
@@ -251,10 +253,12 @@ llm = OllamaLLM(
 
 # memory = ConversationBufferMemory()
 
-memory = SummaryMemory(
+summary_memory = SummaryMemory(
     llm=llm,
     summarize_after=6,
 )
+
+memory = MemoryManager(summary_memory)
 
 # Pipeline
 pipeline = ConversationalRAGPipeline(
