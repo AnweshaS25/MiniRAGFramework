@@ -56,6 +56,8 @@ class MemoryManager:
 
     def get_context(self) -> str:
 
+        # print("MemoryManager.get_context() called")
+
         parts = []
 
         summary = self.summary_memory.get_context()
