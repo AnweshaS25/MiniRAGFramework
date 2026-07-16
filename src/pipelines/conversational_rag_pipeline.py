@@ -27,6 +27,7 @@ class ConversationalRAGPipeline(RAGPipeline):
         output_guard,
         tool_manager,
         memory: MemoryManager,
+        query_rewriter,
     ):
 
         super().__init__(
@@ -43,9 +44,12 @@ class ConversationalRAGPipeline(RAGPipeline):
         )
 
         self.memory = memory
+        self.query_rewriter = query_rewriter
 
     
     def _build_prompt(self, question: str, context: str,) -> str:
+
+        print(">>> USING Conversational _build_prompt")
 
         history = self.memory.get_context()
 
@@ -72,4 +76,29 @@ class ConversationalRAGPipeline(RAGPipeline):
         self.memory.add_message(
             role="assistant",
             content=response.text,
+        )
+
+
+    def run(
+        self,
+        query: str,
+        user,
+    ):
+        """
+        Rewrite conversational queries before running RAG.
+        """
+
+        rewritten_query = self.query_rewriter.rewrite(
+            query=query,
+            memory=self.memory,
+        )
+
+        print("\n=========== QUERY REWRITER ===========")
+        print("Original :", query)
+        print("Rewritten:", rewritten_query)
+        print("======================================\n")
+
+        return super().run(
+            query=rewritten_query,
+            user=user,
         )

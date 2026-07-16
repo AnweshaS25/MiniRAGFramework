@@ -22,6 +22,7 @@ class PromptRouterFactory:
 
             llm = kwargs.get("llm")
             prompt_template = kwargs.get("prompt_template")
+            registry = kwargs.get("registry")
 
             if llm is None:
                 raise ValueError("llm is required.")
@@ -30,10 +31,14 @@ class PromptRouterFactory:
                 raise ValueError(
                     "prompt_template is required."
                 )
+            
+            if registry is None:
+                raise ValueError("registry is required.")
 
             return LLMPromptRouter(
                 llm=llm,
                 prompt_template=prompt_template,
+                registry=registry,
             )
 
         raise ValueError(

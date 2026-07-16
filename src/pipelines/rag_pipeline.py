@@ -182,6 +182,8 @@ class RAGPipeline(BasePipeline):
         Construct the prompt for the LLM.
         """
 
+        print(">>> USING RAGPipeline _build_prompt")
+
         prompt_template = self.prompt_manager.get_prompt_template(question)
 
         return prompt_template.format(
@@ -387,6 +389,14 @@ class RAGPipeline(BasePipeline):
                 k=k,
             )
 
+            print("\n====== RETRIEVED DOCUMENTS ======")
+
+            for i, doc in enumerate(documents):
+                print(f"\nDocument {i+1}")
+                print(doc.content[:500])
+
+            print("\n===============================")
+
             documents = self._rerank_documents(
                 query=query, 
                 documents=documents, 
@@ -425,6 +435,10 @@ class RAGPipeline(BasePipeline):
             prompt_template=prompt_template,
             llm=llm,
         )
+
+        print("\n========== FINAL PROMPT ==========\n")
+        print(prompt)
+        print("\n===============================\n")
 
         # prompt = prompt_template.format(
         #     question=query,

@@ -119,6 +119,10 @@ llm_registry.register_llm(
     ollama_llm,
 )
 
+print("\nRegistered LLMs:")
+for name in llm_registry.get_all_llms():
+    print(name)
+
 
 prompt_router_prompt = PromptRouterPrompt()
 

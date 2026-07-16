@@ -37,12 +37,14 @@ from src.constants import (
 
 from src.pipelines.indexing_pipeline import IndexingPipeline
 from src.pipelines.rag_pipeline import RAGPipeline
+from src.pipelines.conversational_rag_pipeline import ConversationalRAGPipeline
 
 from src.factories.context_strategy_factory import ContextStrategyFactory
 from src.factories.token_budget_strategy_factory import TokenBudgetStrategyFactory
 
 from src.factories.security_guard_factory import SecurityGuardFactory
 from src.factories.output_guard_factory import OutputGuardFactory
+
 
 from src.auth.user import User
 from src.factories.role_factory import RoleFactory
@@ -65,6 +67,45 @@ from src.factories.prompt_router_factory import PromptRouterFactory
 from src.constants import PromptRouterTypes
 
 from src.prompts.prompt_router_prompt import PromptRouterPrompt
+
+from src.document_store.in_memory_document_store import InMemoryDocumentStore
+
+from src.prompts.prompt_registry import PromptRegistry
+from src.prompts.default_prompt_template import DefaultPromptTemplate
+from src.prompts.summary_prompt_template import SummaryPromptTemplate
+from src.prompts.concise_prompt_template import ConcisePromptTemplate
+from src.prompts.citation_prompt_template import CitationPromptTemplate
+
+from src.document_store.in_memory_document_store import InMemoryDocumentStore
+
+from src.llms.llm_registry import LLMRegistry
+
+from src.llm_routing.rule_based_llm_router import RuleBasedLLMRouter
+from src.llm_strategies.default_fallback_strategy import DefaultFallbackStrategy
+from src.factories.llm_manager_factory import LLMManagerFactory
+
+from src.memory.memory_manager import MemoryManager
+from src.memory.conversation_buffer_memory import ConversationBufferMemory
+from src.memory.conversation_window_memory import ConversationWindowMemory
+from src.memory.summary_memory import SummaryMemory
+
+from src.strategies.context_registry import ContextRegistry
+from src.strategies.context_manager import ContextManager
+
+from src.strategies.default_context_strategy import DefaultContextStrategy
+from src.strategies.hybrid_context_strategy import HybridContextStrategy
+from src.strategies.lcm_context_strategy import LCMContextStrategy
+
+from src.context_routing.rule_based_context_router import RuleBasedContextRouter
+from src.context_routing.llm_context_router import LLMContextRouter
+from src.prompts.context_router_prompt import ContextRouterPrompt
+
+from src.core.context_request import ContextRequest
+
+from src.query_rewriting.rule_based_query_rewriter import RuleBasedQueryRewriter
+from src.query_rewriting.query_rewriter_manager import QueryRewriterManager
+
+from src.query_rewriting.llm_query_rewriter import LLMQueryRewriter
 
 
 current_user = User(
@@ -171,11 +212,14 @@ if uploaded_file is not None:
 
         vector_store.clear()
 
+        document_store = InMemoryDocumentStore()
+
         indexing_pipeline = IndexingPipeline(
             loader=loader,
             splitter=splitter,
             embedding_model=embedding_model,
             vector_store=vector_store,
+            document_store=document_store,
         )
         try: 
             with st.spinner("🧠 Indexing document..."):
@@ -191,6 +235,8 @@ if uploaded_file is not None:
             if os.path.exists(pdf_path):
                 os.remove(pdf_path)
 
+
+
         retriever = RetrieverFactory.create(
             RetrieverTypes.SIMILARITY,
             embedding_model=embedding_model,
@@ -199,16 +245,68 @@ if uploaded_file is not None:
 
         llm = LLMFactory.create(LLMTypes.GROQ,)
 
+        llm_registry = LLMRegistry()
+
+        groq_llm = LLMFactory.create(
+            LLMTypes.GROQ,
+        )
+
+        gemini_llm = LLMFactory.create(
+            LLMTypes.GEMINI,
+        )
+
+        ollama_llm = LLMFactory.create(
+            LLMTypes.OLLAMA,
+        )
+
+        llm_registry.register_llm(
+            LLMTypes.GROQ,
+            groq_llm,
+        )
+
+        llm_registry.register_llm(
+            LLMTypes.GEMINI,
+            gemini_llm,
+        )
+
+        llm_registry.register_llm(
+            LLMTypes.OLLAMA,
+            ollama_llm,
+        )
+
+
         reranker = RerankerFactory.create(RerankerTypes.NONE,)
 
-        prompt_router = PromptRouterFactory.create(
-            PromptRouterTypes.LLM,
-            llm=llm,
-            prompt_template=PromptRouterPrompt(),
+        prompt_registry = PromptRegistry()
+
+        prompt_registry.register_prompt(
+            DefaultPromptTemplate()
         )
+
+        prompt_registry.register_prompt(
+            SummaryPromptTemplate()
+        )
+
+        prompt_registry.register_prompt(
+            ConcisePromptTemplate(),
+        )
+
+        prompt_registry.register_prompt(
+            CitationPromptTemplate(),
+        )
+
+        # prompt_router = PromptRouterFactory.create(
+        #     prompt_router = RuleBasedPromptRouter(),
+        #     llm=groq_llm,
+        #     prompt_template=PromptRouterPrompt(),
+        #     registry=prompt_registry,
+        # )
+
+        prompt_router = RuleBasedPromptRouter()
 
         prompt_manager = PromptManager(
             router=prompt_router,
+            registry=prompt_registry,
             # llm=llm,
             # prompt_template=PromptRouterPrompt(),
         )
@@ -234,7 +332,7 @@ if uploaded_file is not None:
         )
 
         tool_router = LLMToolRouter(
-            llm=llm,
+            llm=groq_llm,
             prompt_template=tool_router_prompt,
             registry=tool_registry,
         )
@@ -246,26 +344,94 @@ if uploaded_file is not None:
 
         security_guard = SecurityGuardFactory.create(
             security_type=SecurityTypes.LLM,
-            llm=llm,
+            llm=groq_llm
         )
 
         output_guard = OutputGuardFactory.create()
 
-        context_strategy = ContextStrategyFactory.create()
+        # context_strategy = ContextStrategyFactory.create()
 
         token_budget_strategy = TokenBudgetStrategyFactory.create()
 
+        llm_router = RuleBasedLLMRouter()
 
-        rag_pipeline = RAGPipeline(
+        fallback_strategy = DefaultFallbackStrategy()
+
+        llm_manager = LLMManagerFactory.create(
+            router=llm_router,
+            registry=llm_registry,
+            fallback_strategy=fallback_strategy,
+        )
+
+
+        buffer_memory = ConversationBufferMemory()
+
+        window_memory = ConversationWindowMemory(
+            window_size=2,
+        )
+
+        summary_memory = SummaryMemory(
+            llm=llm,
+            summarize_after=6,
+        )
+
+        memory = MemoryManager(
+            buffer_memory=buffer_memory,
+            window_memory=window_memory,
+            summary_memory=summary_memory,
+        )
+
+        query_rewriter = QueryRewriterManager(
+            rewriter=LLMQueryRewriter(
+                llm=groq_llm,
+            ),
+        )
+
+
+        context_registry = ContextRegistry()
+
+        context_registry.register_strategy(
+            "default",
+            DefaultContextStrategy(),
+        )
+
+        context_registry.register_strategy(
+            "hybrid",
+            HybridContextStrategy(),
+        )
+
+        context_registry.register_strategy(
+            "lcm",
+            LCMContextStrategy(),
+        )
+
+        # context_router = LLMContextRouter(
+        #     llm=llm,
+        #     prompt_template=ContextRouterPrompt(),
+        #     registry=context_registry,
+        # )
+
+        context_router = RuleBasedContextRouter()
+
+        context_manager = ContextManager(
+            router=context_router,
+            registry=context_registry,
+        )
+
+
+        rag_pipeline = ConversationalRAGPipeline(
             retriever=retriever,
             prompt_manager=prompt_manager,
-            llm=llm,
+            document_store=document_store,
+            llm_manager=llm_manager,
             reranker=reranker,
-            context_strategy=context_strategy,
+            context_manager=context_manager,
             token_budget_strategy=token_budget_strategy,
             security_guard=security_guard,
             output_guard=output_guard,
             tool_manager=tool_manager,
+            memory=memory,
+            query_rewriter=query_rewriter,
         )
 
         st.session_state.rag_pipeline = rag_pipeline
@@ -325,6 +491,11 @@ if st.session_state.indexed:
                     assistant_answer = f"🔒 {e}"
 
                 except Exception as e:
+
+                    import traceback
+
+                    st.code(traceback.format_exc())
+
                     assistant_answer = f"❌ Error: {e}"
 
                 st.markdown(assistant_answer)
