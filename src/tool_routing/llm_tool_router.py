@@ -43,6 +43,11 @@ class LLMToolRouter(BaseToolRouter):
         if data is None:
             return None
         
+
+        print("Parsed JSON:", data)
+        print("Tool field :", data.get("tool"))
+        print("Arguments  :", data.get("arguments"))
+        
         return ToolRequest(
             tool_name=data["tool"],
             arguments=data.get("arguments", {}),

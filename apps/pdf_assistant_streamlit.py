@@ -525,7 +525,7 @@ if st.session_state.indexed:
 
                     import traceback
 
-                    # st.code(traceback.format_exc())
+                    st.code(traceback.format_exc())
 
                     assistant_answer = f"❌ Error: {e}"
 

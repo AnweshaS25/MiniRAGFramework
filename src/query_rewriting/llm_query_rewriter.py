@@ -51,6 +51,10 @@ class LLMQueryRewriter(BaseQueryRewriter):
         Rewritten Question:
         """
 
+        print("\n========== QUERY REWRITER PROMPT ==========\n")
+        print(prompt)
+        print("\n===========================================\n")
+
         response = self.llm_manager.generate(
             query=query,
             prompt=prompt,
