@@ -2,6 +2,7 @@ from src.security.base_guard import BaseGuard
 from src.security.security_result import SecurityResult
 
 from src.llms.base_llm import BaseLLM
+from src.llms.llm_manager import LLMManager
 
 
 class LLMPromptInjectionGuard(BaseGuard):
@@ -9,8 +10,8 @@ class LLMPromptInjectionGuard(BaseGuard):
     Uses an LLM to classify whether a prompt is malicious.
     """
 
-    def __init__(self, llm: BaseLLM):
-        self.llm = llm
+    def __init__(self, llm_manager: LLMManager):
+        self.llm_manager = llm_manager
 
 
     def _parse_classifier_output(self, response_text: str,) -> bool:
@@ -97,7 +98,11 @@ User Prompt:
 """
 
 
-        response = self.llm.generate(classification_prompt)
+        response = self.llm_manager.generate(
+            query=prompt,
+            prompt=classification_prompt,
+        )
+        
         response_text = response.text
 
         is_safe = self._parse_classifier_output(response_text)

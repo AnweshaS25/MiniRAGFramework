@@ -79,6 +79,7 @@ from src.prompts.citation_prompt_template import CitationPromptTemplate
 from src.document_store.in_memory_document_store import InMemoryDocumentStore
 
 from src.llms.llm_registry import LLMRegistry
+from src.llms.llm_manager import LLMManager
 
 from src.llm_routing.rule_based_llm_router import RuleBasedLLMRouter
 from src.llm_strategies.default_fallback_strategy import DefaultFallbackStrategy
@@ -313,7 +314,18 @@ if uploaded_file is not None:
             # llm=llm,
             # prompt_template=PromptRouterPrompt(),
         )
+
+        llm_router = RuleBasedLLMRouter()
+
+        fallback_strategy = DefaultFallbackStrategy()
+
+        llm_manager = LLMManagerFactory.create(
+            router=llm_router,
+            registry=llm_registry,
+            fallback_strategy=fallback_strategy,
+        )
         
+
 
         tool_router_prompt = ToolRouterPrompt()
 
@@ -335,7 +347,7 @@ if uploaded_file is not None:
         )
 
         tool_router = LLMToolRouter(
-            llm=groq_llm,
+            llm_manager=llm_manager,
             prompt_template=tool_router_prompt,
             registry=tool_registry,
         )
@@ -345,9 +357,20 @@ if uploaded_file is not None:
             executor=tool_executor,
         )
 
+        # llm_router = RuleBasedLLMRouter()
+
+        # fallback_strategy = DefaultFallbackStrategy()
+
+        # llm_manager = LLMManagerFactory.create(
+        #     router=llm_router,
+        #     registry=llm_registry,
+        #     fallback_strategy=fallback_strategy,
+        # )
+
+
         security_guard = SecurityGuardFactory.create(
             security_type=SecurityTypes.LLM,
-            llm=groq_llm
+            llm_manager=llm_manager,
         )
 
         output_guard = OutputGuardFactory.create()
@@ -356,15 +379,15 @@ if uploaded_file is not None:
 
         token_budget_strategy = TokenBudgetStrategyFactory.create()
 
-        llm_router = RuleBasedLLMRouter()
+        # llm_router = RuleBasedLLMRouter()
 
-        fallback_strategy = DefaultFallbackStrategy()
+        # fallback_strategy = DefaultFallbackStrategy()
 
-        llm_manager = LLMManagerFactory.create(
-            router=llm_router,
-            registry=llm_registry,
-            fallback_strategy=fallback_strategy,
-        )
+        # llm_manager = LLMManagerFactory.create(
+        #     router=llm_router,
+        #     registry=llm_registry,
+        #     fallback_strategy=fallback_strategy,
+        # )
 
 
         buffer_memory = ConversationBufferMemory()
@@ -374,7 +397,7 @@ if uploaded_file is not None:
         )
 
         summary_memory = SummaryMemory(
-            llm=llm,
+            llm_manager=llm_manager,
             summarize_after=6,
         )
 
@@ -390,7 +413,7 @@ if uploaded_file is not None:
 
         query_rewriter = QueryRewriterManager(
             rewriter=LLMQueryRewriter(
-                llm=groq_llm,
+                llm_manager=llm_manager,
             ),
         )
 
@@ -412,11 +435,11 @@ if uploaded_file is not None:
             LCMContextStrategy(),
         )
 
-        # context_router = LLMContextRouter(
-        #     llm=llm,
-        #     prompt_template=ContextRouterPrompt(),
-        #     registry=context_registry,
-        # )
+#         context_router = LLMContextRouter(
+#               llm_manager=llm_manager,
+#               prompt_template=context_prompt_template,
+#               registry=context_registry,
+#         )
 
         context_router = RuleBasedContextRouter()
 
@@ -502,7 +525,7 @@ if st.session_state.indexed:
 
                     import traceback
 
-                    st.code(traceback.format_exc())
+                    # st.code(traceback.format_exc())
 
                     assistant_answer = f"❌ Error: {e}"
 

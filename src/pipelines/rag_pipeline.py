@@ -193,12 +193,19 @@ class RAGPipeline(BasePipeline):
     )
     
 
-    def _generate_response(self, prompt: str,) -> LLMResponse:
+    def _generate_response(
+        self, 
+        query: str,
+        prompt: str,
+    ) -> LLMResponse:
         """
-        Generate the final response from the LLM.
+        Generate the final response using the LLM manager.
         """
 
-        return self.llm.generate(prompt)
+        return self.llm_manager.generate(
+            query=query,
+            prompt=prompt,
+        )
     
 
     def _after_generation(self, query: str, response: LLMResponse,) -> None:
@@ -366,7 +373,10 @@ class RAGPipeline(BasePipeline):
         Do not mention that a tool was used.
         """
             
-            tool_response = self.llm_manager.get_llm(query).generate(tool_prompt)
+            tool_response = self.llm_manager.generate(
+                query=query,
+                prompt=tool_prompt,
+            )
 
             return tool_response
         
@@ -446,26 +456,31 @@ class RAGPipeline(BasePipeline):
         #     history="",
         # )
 
-        llm_chain = self.llm_manager.get_llm_chain(query)
+        # llm_chain = self.llm_manager.get_llm_chain(query)
 
-        last_exception = None
+        # last_exception = None
 
-        for llm in llm_chain:
-            print(f"Trying {llm.__class__.__name__}...")
+        # for llm in llm_chain:
+            # print(f"Trying {llm.__class__.__name__}...")
 
-            try:
-                response = llm.generate(prompt)
-                print(f"Using {llm.__class__.__name__}")
-                break
+            # try:
+                # response = llm.generate(prompt)
+                # print(f"Using {llm.__class__.__name__}")
+                # break
 
-            except Exception as e:
-                print(f"{llm.__class__.__name__} failed: {e}")
-                last_exception = e
+            # except Exception as e:
+                # print(f"{llm.__class__.__name__} failed: {e}")
+                # last_exception = e
 
-        else:
-            raise RuntimeError(
-                f"All registered LLMs failed. Last error: {last_exception}"
-            )
+        # else:
+            # raise RuntimeError(
+                # f"All registered LLMs failed. Last error: {last_exception}"
+            # )
+
+        response = self._generate_response(
+            query=query,
+            prompt=prompt,
+        )
 
         # response = llm.generate(prompt)
 

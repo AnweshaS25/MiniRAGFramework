@@ -3,14 +3,22 @@ import json
 from src.context_routing.base_context_router import BaseContextRouter
 from src.core.context_request import ContextRequest
 
+from src.llms.llm_manager import LLMManager
+
 
 class LLMContextRouter(BaseContextRouter):
     """
     Uses an LLM to decide which context strategy should be used.
     """
 
-    def __init__(self, llm, prompt_template, registry):
-        self.llm = llm
+    def __init__(self, llm_manager: LLMManager, prompt_template, registry):
+
+        if llm_manager is None:
+            raise ValueError(
+                "llm_manager cannot be None."
+            )
+
+        self.llm_manager = llm_manager
         self.prompt_template = prompt_template
         self.registry = registry
 
@@ -21,7 +29,10 @@ class LLMContextRouter(BaseContextRouter):
             registry=self.registry,
         )
 
-        response = self.llm.generate(prompt)
+        response = self.llm_manager.generate(
+            query=query,
+            prompt=prompt,
+        )
 
         print("Context Router raw response:")
         print(response.text)

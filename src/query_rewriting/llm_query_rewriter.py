@@ -1,5 +1,6 @@
 from src.query_rewriting.base_query_rewriter import BaseQueryRewriter
 from src.memory.memory_manager import MemoryManager
+from src.llms.llm_manager import LLMManager
 
 
 class LLMQueryRewriter(BaseQueryRewriter):
@@ -8,12 +9,12 @@ class LLMQueryRewriter(BaseQueryRewriter):
     standalone queries suitable for retrieval.
     """
 
-    def __init__(self, llm):
+    def __init__(self, llm_manager: LLMManager):
 
-        if llm is None:
-            raise ValueError("llm cannot be None.")
+        if llm_manager is None:
+            raise ValueError("llm_manager cannot be None.")
 
-        self.llm = llm
+        self.llm_manager = llm_manager
 
     def rewrite(
         self,
@@ -50,7 +51,10 @@ class LLMQueryRewriter(BaseQueryRewriter):
         Rewritten Question:
         """
 
-        response = self.llm.generate(prompt)
+        response = self.llm_manager.generate(
+            query=query,
+            prompt=prompt,
+        )
 
         rewritten_query = response.text.strip()
 

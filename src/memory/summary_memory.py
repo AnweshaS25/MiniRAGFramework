@@ -1,5 +1,6 @@
 from src.memory.base_memory import BaseMemory
 from src.llms.base_llm import BaseLLM
+from src.llms.llm_manager import LLMManager
 
 from src.memory_retrieval.memory_document import MemoryDocument
 
@@ -11,10 +12,16 @@ class SummaryMemory(BaseMemory):
 
     def __init__(
         self,
-        llm: BaseLLM,
+        llm_manager:LLMManager,
         summarize_after: int = 6,
     ):
-        self.llm = llm
+        
+        if llm_manager is None:
+            raise ValueError(
+                "llm_manager cannot be None."
+            )
+
+        self.llm_manager = llm_manager
         self.summary = ""
         self.recent_messages = []
         self.summarize_after = summarize_after
@@ -119,7 +126,11 @@ class SummaryMemory(BaseMemory):
         Keep it under 150 words.
         """
 
-        response = self.llm.generate(prompt)
+        response = self.llm_manager.generate(
+            query="conversation summary",
+            prompt=prompt,
+        )
+
         self.summary = response.text.strip() 
 
         self.recent_messages.clear()

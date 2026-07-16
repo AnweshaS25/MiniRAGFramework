@@ -8,6 +8,7 @@ from src.security.attacks.attack_dataset import AttackDataset
 
 from src.embeddings.base_embeddings import BaseEmbeddings
 from src.llms.base_llm import BaseLLM
+from src.llms.llm_manager import LLMManager
 
 
 class SecurityGuardFactory:
@@ -16,7 +17,7 @@ class SecurityGuardFactory:
     """
 
     @staticmethod
-    def create(security_type: str, embedding_model: BaseEmbeddings = None, llm: BaseLLM = None,):
+    def create(security_type: str, embedding_model: BaseEmbeddings = None, llm_manager: LLMManager = None,):
 
         if security_type == SecurityTypes.RULE_BASED:
             return PromptInjectionGuard()
@@ -34,11 +35,11 @@ class SecurityGuardFactory:
 
         elif security_type == SecurityTypes.LLM:
 
-            if llm is None:
+            if llm_manager is None:
                 raise ValueError(
-                    "llm cannot be None for LLMPromptInjectionGuard."
+                    "llm_manager cannot be None for LLMPromptInjectionGuard."
                 )
 
-            return LLMPromptInjectionGuard(llm=llm,)
+            return LLMPromptInjectionGuard(llm_manager=llm_manager,)
         
         raise ValueError(f"Unsupported security guard: {security_type}")

@@ -55,3 +55,43 @@ class LLMManager:
             preferred_llm=preferred_llm,
             available_llms=self.registry.get_all_llms(),
         )
+    
+
+    def generate(
+        self,
+        query: str,
+        prompt: str,
+    ):
+        """
+        Generate using the preferred LLM.
+        If it fails, automatically try the remaining LLMs.
+        """
+
+        llm_chain = self.get_llm_chain(query)
+
+        last_exception = None
+
+        for llm in llm_chain:
+
+            try:
+
+                print(f"Trying {llm.__class__.__name__}...")
+
+                response = llm.generate(prompt)
+
+                print(f"Using {llm.__class__.__name__}")
+
+                return response
+
+            except Exception as e:
+
+                print(
+                    f"{llm.__class__.__name__} failed:"
+                    f" {e}"
+                )
+
+                last_exception = e
+
+        raise RuntimeError(
+            f"All LLMs failed. Last error:\n{last_exception}"
+        )
