@@ -1,4 +1,5 @@
 from src.memory.base_memory import BaseMemory
+from src.memory_retrieval.memory_document import MemoryDocument
 
 
 class ConversationBufferMemory(BaseMemory):
@@ -8,6 +9,10 @@ class ConversationBufferMemory(BaseMemory):
 
     def __init__(self):
         self.messages = []
+
+
+    def get_messages(self):
+        return self.messages
 
     
     def add_message(self, role: str, content: str,) -> None:
@@ -23,10 +28,12 @@ class ConversationBufferMemory(BaseMemory):
             )
 
         self.messages.append(
-            {
-                "role": role,
-                "content": content,
-            }
+             MemoryDocument(
+                 content=content,
+                 metadata={
+                     "role": role,
+                }
+            )
         )
 
         print(f"Added {role}: {content}")
@@ -40,9 +47,8 @@ class ConversationBufferMemory(BaseMemory):
 
         for message in self.messages:
             history.append(
-                f"{message['role'].capitalize()}: {message['content']}"
+                f"{message.metadata['role'].capitalize()}: {message.content}"
             )
-
         return "\n".join(history)
     
 

@@ -9,6 +9,8 @@ from src.rerankers.base_reranker import BaseReranker
 
 from src.core.llm_response import LLMResponse
 
+from src.memory_retrieval.memory_retriever_manager import MemoryRetrieverManager
+
 class ConversationalRAGPipeline(RAGPipeline):
     """
     RAG pipeline with conversation memory support.
@@ -28,6 +30,7 @@ class ConversationalRAGPipeline(RAGPipeline):
         tool_manager,
         memory: MemoryManager,
         query_rewriter,
+        memory_retriever: MemoryRetrieverManager,
     ):
 
         super().__init__(
@@ -45,13 +48,19 @@ class ConversationalRAGPipeline(RAGPipeline):
 
         self.memory = memory
         self.query_rewriter = query_rewriter
+        self.memory_retriever = memory_retriever
 
     
     def _build_prompt(self, question: str, context: str,) -> str:
 
         print(">>> USING Conversational _build_prompt")
 
-        history = self.memory.get_context()
+        # history = self.memory.get_context()
+
+        history = self.memory_retriever.retrieve(
+            query=question,
+            memory=self.memory,
+        )
 
         print("\n================ HISTORY ================\n")
         print(history)

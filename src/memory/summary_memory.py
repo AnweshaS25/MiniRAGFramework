@@ -1,6 +1,8 @@
 from src.memory.base_memory import BaseMemory
 from src.llms.base_llm import BaseLLM
 
+from src.memory_retrieval.memory_document import MemoryDocument
+
 
 class SummaryMemory(BaseMemory):
     """
@@ -30,10 +32,12 @@ class SummaryMemory(BaseMemory):
             )
 
         self.recent_messages.append(
-            {
-                "role": role,
-                "content": content,
-            }
+            MemoryDocument(
+                content=content,
+                metadata={
+                    "role": role,
+                }
+            )
         )
 
         # TODO:
@@ -56,7 +60,7 @@ class SummaryMemory(BaseMemory):
 
             for message in self.recent_messages:
                 history.append(
-                    f"{message['role'].capitalize()}: {message['content']}"
+                    f"{message.metadata['role'].capitalize()}: {message.content}"
                 )
 
             sections.append(
@@ -77,7 +81,7 @@ class SummaryMemory(BaseMemory):
 
         for message in self.recent_messages:
             conversation.append(
-                f"{message['role'].capitalize()}: {message['content']}"
+                f"{message.metadata['role'].capitalize()}: {message.content}"
             )
 
         conversation = "\n".join(conversation)

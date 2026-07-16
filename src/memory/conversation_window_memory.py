@@ -1,4 +1,5 @@
 from src.memory.base_memory import BaseMemory
+from src.memory_retrieval.memory_document import MemoryDocument
 
 
 class ConversationWindowMemory(BaseMemory):
@@ -25,10 +26,12 @@ class ConversationWindowMemory(BaseMemory):
             )
 
         self.messages.append(
-            {
-                "role": role,
-                "content": content,
-            }
+            MemoryDocument(
+                content=content,
+                metadata={
+                    "role": role,
+                }
+            )
         )
 
         # Keep only the last `window_size` messages
@@ -47,7 +50,7 @@ class ConversationWindowMemory(BaseMemory):
 
         for message in self.messages:
             history.append(
-                f"{message['role'].capitalize()}: {message['content']}"
+                f"{message.metadata['role'].capitalize()}: {message.content}"
             )
 
         return "\n".join(history)

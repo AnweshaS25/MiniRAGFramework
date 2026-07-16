@@ -83,3 +83,6 @@ class MemoryManager:
 
     def get_full_history(self) -> str:
         return self.buffer_memory.get_context()
+    
+    def get_messages(self):
+        return self.buffer_memory.get_messages()

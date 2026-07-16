@@ -107,6 +107,9 @@ from src.query_rewriting.query_rewriter_manager import QueryRewriterManager
 
 from src.query_rewriting.llm_query_rewriter import LLMQueryRewriter
 
+from src.memory_retrieval.keyword_memory_retriever import KeywordMemoryRetriever
+from src.memory_retrieval.memory_retriever_manager import MemoryRetrieverManager
+
 
 current_user = User(
     username="anwesha",
@@ -381,6 +384,10 @@ if uploaded_file is not None:
             summary_memory=summary_memory,
         )
 
+        memory_retriever = MemoryRetrieverManager(
+            retriever=KeywordMemoryRetriever(),
+        )
+
         query_rewriter = QueryRewriterManager(
             rewriter=LLMQueryRewriter(
                 llm=groq_llm,
@@ -432,6 +439,7 @@ if uploaded_file is not None:
             tool_manager=tool_manager,
             memory=memory,
             query_rewriter=query_rewriter,
+            memory_retriever=memory_retriever,
         )
 
         st.session_state.rag_pipeline = rag_pipeline
