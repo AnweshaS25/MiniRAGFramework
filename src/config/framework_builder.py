@@ -12,6 +12,8 @@ from src.config.tool_builder import ToolBuilder
 
 from src.config.context_builder import ContextBuilder
 
+from src.config.query_builder import QueryBuilder
+
 
 class FrameworkBuilder:
     """
@@ -38,6 +40,8 @@ class FrameworkBuilder:
         self.tool_builder = ToolBuilder(config)
 
         self.context_builder = ContextBuilder(config)
+
+        self.query_builder = QueryBuilder(config)
 
 
     def build_core(
@@ -83,6 +87,12 @@ class FrameworkBuilder:
 
         self.components.context_manager = self.build_context_manager()
 
+        query_components = self.build_query()
+
+        self.components.query_rewriter = query_components["query_rewriter"]
+
+        self.components.memory_retriever = query_components["memory_retriever"]
+
         return self.components
     
 
@@ -106,5 +116,11 @@ class FrameworkBuilder:
 
     def build_context_manager(self):
         return self.context_builder.build(
+            llm_manager=self.components.llm_manager,
+        )
+    
+
+    def build_query(self):
+        return self.query_builder.build(
             llm_manager=self.components.llm_manager,
         )

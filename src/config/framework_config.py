@@ -1,6 +1,7 @@
 from src.constants import PromptRouterTypes
 from src.constants import ToolRouterTypes
 from src.constants import ContextRouterTypes
+from src.constants import QueryRewriterTypes
 
 from dataclasses import dataclass
 
@@ -25,6 +26,8 @@ class FrameworkConfig:
     tool_router_type: ToolRouterTypes
 
     context_router_type: ContextRouterTypes
+
+    query_rewriter_type: QueryRewriterTypes
 
     conversation_window_size: int = 2
 

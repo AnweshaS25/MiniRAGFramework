@@ -34,7 +34,8 @@ from src.constants import (
     SecurityTypes,
     RoleTypes,
     ToolRouterTypes,
-    ContextRouterTypes
+    ContextRouterTypes,
+    QueryRewriterTypes,
 )
 
 from src.pipelines.indexing_pipeline import IndexingPipeline
@@ -236,6 +237,8 @@ if uploaded_file is not None:
             tool_router_type=ToolRouterTypes.LLM,
 
             context_router_type=ContextRouterTypes.RULE_BASED,
+
+            query_rewriter_type=QueryRewriterTypes.LLM,
         )
 
         builder = FrameworkBuilder(config)
@@ -251,6 +254,13 @@ if uploaded_file is not None:
         memory = framework.memory
 
         context_manager = framework.context_manager
+
+        query_rewriter = framework.query_rewriter
+
+        memory_retriever = framework.memory_retriever
+
+
+
 
         st.write(type(framework))
 
@@ -489,15 +499,15 @@ if uploaded_file is not None:
         # )
 
 
-        memory_retriever = MemoryRetrieverManager(
-            retriever=KeywordMemoryRetriever(),
-        )
+        # memory_retriever = MemoryRetrieverManager(
+        #     retriever=KeywordMemoryRetriever(),
+        # )
 
-        query_rewriter = QueryRewriterManager(
-            rewriter=LLMQueryRewriter(
-                llm_manager=llm_manager,
-            ),
-        )
+        # query_rewriter = QueryRewriterManager(
+        #     rewriter=LLMQueryRewriter(
+        #         llm_manager=llm_manager,
+        #     ),
+        # )
 
 
         # context_registry = ContextRegistry()

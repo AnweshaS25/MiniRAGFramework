@@ -83,3 +83,7 @@ class ToolRouterTypes:
 class ContextRouterTypes:
     RULE_BASED = "rule_based"
     LLM = "llm"
+
+
+class QueryRewriterTypes:
+    LLM = "llm"
