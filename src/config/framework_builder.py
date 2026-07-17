@@ -8,6 +8,10 @@ from src.config.memory_builder import MemoryBuilder
 
 from src.config.prompt_builder import PromptBuilder
 
+from src.config.tool_builder import ToolBuilder
+
+from src.config.context_builder import ContextBuilder
+
 
 class FrameworkBuilder:
     """
@@ -30,6 +34,10 @@ class FrameworkBuilder:
         self.memory_builder = MemoryBuilder(config)
 
         self.prompt_builder = PromptBuilder(config)
+
+        self.tool_builder = ToolBuilder(config)
+
+        self.context_builder = ContextBuilder(config)
 
 
     def build_core(
@@ -71,6 +79,10 @@ class FrameworkBuilder:
 
         self.components.prompt_manager = self.build_prompt_manager()
 
+        self.components.tool_manager = self.build_tool_manager()
+
+        self.components.context_manager = self.build_context_manager()
+
         return self.components
     
 
@@ -82,5 +94,17 @@ class FrameworkBuilder:
 
     def build_prompt_manager(self):
         return self.prompt_builder.build(
+            llm_manager=self.components.llm_manager,
+        )
+    
+
+    def build_tool_manager(self):
+        return self.tool_builder.build(
+            llm_manager=self.components.llm_manager,
+        )
+    
+
+    def build_context_manager(self):
+        return self.context_builder.build(
             llm_manager=self.components.llm_manager,
         )

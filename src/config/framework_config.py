@@ -1,4 +1,6 @@
 from src.constants import PromptRouterTypes
+from src.constants import ToolRouterTypes
+from src.constants import ContextRouterTypes
 
 from dataclasses import dataclass
 
@@ -19,6 +21,10 @@ class FrameworkConfig:
     llm_types: list[str]
     
     prompt_router_type: PromptRouterTypes
+
+    tool_router_type: ToolRouterTypes
+
+    context_router_type: ContextRouterTypes
 
     conversation_window_size: int = 2
 

@@ -69,6 +69,17 @@ class RoleTypes:
     FINANCE = "finance"
     ENGINEERING = "engineering"
 
+
 class PromptRouterTypes:
+    RULE_BASED = "rule_based"
+    LLM = "llm"
+
+
+class ToolRouterTypes:
+    RULE_BASED = "rule_based"
+    LLM = "llm"
+
+
+class ContextRouterTypes:
     RULE_BASED = "rule_based"
     LLM = "llm"

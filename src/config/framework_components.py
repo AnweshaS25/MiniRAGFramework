@@ -26,3 +26,7 @@ class FrameworkComponents:
         self.memory_retriever = None
 
         self.reranker = None
+
+        self.token_budget_strategy = None
+
+        self.pipeline = None
