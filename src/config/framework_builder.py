@@ -16,6 +16,8 @@ from src.config.query_builder import QueryBuilder
 
 from src.config.security_builder import SecurityBuilder
 
+from src.config.indexing_pipeline_builder import IndexingPipelineBuilder
+
 
 class FrameworkBuilder:
     """
@@ -46,6 +48,8 @@ class FrameworkBuilder:
         self.query_builder = QueryBuilder(config)
 
         self.security_builder = SecurityBuilder(config)
+
+        self.indexing_pipeline_builder = IndexingPipelineBuilder(config)
 
 
     def build_core(
@@ -104,6 +108,12 @@ class FrameworkBuilder:
         self.components.token_budget_strategy = security_components["token_budget_strategy"]
         self.components.reranker = security_components["reranker"]
 
+        indexing_components = self.build_indexing_pipeline()
+
+        self.components.document_store = indexing_components["document_store"]
+
+        self.components.indexing_pipeline = indexing_components["indexing_pipeline"]
+
         return self.components
     
 
@@ -140,4 +150,10 @@ class FrameworkBuilder:
     def build_security(self):
         return self.security_builder.build(
             llm_manager=self.components.llm_manager,
+        )
+    
+
+    def build_indexing_pipeline(self):
+        return self.indexing_pipeline_builder.build(
+            core=self.components.core,
         )

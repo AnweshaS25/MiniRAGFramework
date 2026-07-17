@@ -1,9 +1,11 @@
-from src.pipelines.conversational_rag_pipeline import ConversationalRAGPipeline
+from src.pipelines.conversational_rag_pipeline import (
+    ConversationalRAGPipeline,
+)
 
 
 class PipelineBuilder:
     """
-    Builds the RAG pipeline.
+    Builds the conversational RAG pipeline.
     """
 
     def __init__(self, config):
@@ -13,5 +15,21 @@ class PipelineBuilder:
     def build(
         self,
         components,
+        document_store,
     ):
-        pass
+        return ConversationalRAGPipeline(
+
+            retriever=components.core["retriever"],
+            prompt_manager=components.prompt_manager,
+            document_store=document_store,
+            llm_manager=components.llm_manager,
+            reranker=components.reranker,
+            context_manager=components.context_manager,
+            token_budget_strategy=components.token_budget_strategy,
+            security_guard=components.security_guard,
+            output_guard=components.output_guard,
+            tool_manager=components.tool_manager,
+            memory=components.memory,
+            query_rewriter=components.query_rewriter,
+            memory_retriever=components.memory_retriever,
+        )

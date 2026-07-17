@@ -252,6 +252,10 @@ if uploaded_file is not None:
 
         framework = builder.build(pdf_path)
 
+        document_store = framework.document_store
+
+        indexing_pipeline = framework.indexing_pipeline
+
         tool_manager = framework.tool_manager
 
         prompt_manager = framework.prompt_manager
@@ -271,6 +275,7 @@ if uploaded_file is not None:
         output_guard = framework.output_guard
 
         token_budget_strategy = framework.token_budget_strategy
+
 
 
 
@@ -319,15 +324,15 @@ if uploaded_file is not None:
 
         vector_store.clear()
 
-        document_store = InMemoryDocumentStore()
+        # document_store = InMemoryDocumentStore()
 
-        indexing_pipeline = IndexingPipeline(
-            loader=loader,
-            splitter=splitter,
-            embedding_model=embedding_model,
-            vector_store=vector_store,
-            document_store=document_store,
-        )
+        # indexing_pipeline = IndexingPipeline(
+        #     loader=loader,
+        #     splitter=splitter,
+        #     embedding_model=embedding_model,
+        #     vector_store=vector_store,
+        #     document_store=document_store,
+        # )
         try: 
             with st.spinner("🧠 Indexing document..."):
                 chunks = indexing_pipeline.run(
