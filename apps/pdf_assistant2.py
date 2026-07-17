@@ -239,11 +239,16 @@ if uploaded_file is not None:
             context_router_type=ContextRouterTypes.RULE_BASED,
 
             query_rewriter_type=QueryRewriterTypes.LLM,
+
+            security_type=SecurityTypes.LLM,
+
+            reranker_type=RerankerTypes.NONE,
         )
 
+
+
+
         builder = FrameworkBuilder(config)
-
-
 
         framework = builder.build(pdf_path)
 
@@ -259,6 +264,14 @@ if uploaded_file is not None:
 
         memory_retriever = framework.memory_retriever
 
+        reranker = framework.reranker
+
+        security_guard = framework.security_guard
+
+        output_guard = framework.output_guard
+
+        token_budget_strategy = framework.token_budget_strategy
+
 
 
 
@@ -270,7 +283,8 @@ if uploaded_file is not None:
 
 
 
-        core = builder.build_core(pdf_path)
+        # core = builder.build_core(pdf_path)
+        core = framework.core
 
 
         loader = core["loader"]
@@ -368,7 +382,7 @@ if uploaded_file is not None:
         # )
 
 
-        reranker = RerankerFactory.create(RerankerTypes.NONE,)
+        # reranker = RerankerFactory.create(RerankerTypes.NONE,)
 
         # prompt_registry = PromptRegistry()
 
@@ -414,7 +428,8 @@ if uploaded_file is not None:
         #     fallback_strategy=fallback_strategy,
         # )
 
-        llm_manager = builder.build_llm()
+        # llm_manager = builder.build_llm()
+        llm_manager = framework.llm_manager
         
 
 
@@ -459,16 +474,16 @@ if uploaded_file is not None:
         # )
 
 
-        security_guard = SecurityGuardFactory.create(
-            security_type=SecurityTypes.LLM,
-            llm_manager=llm_manager,
-        )
+        # security_guard = SecurityGuardFactory.create(
+        #     security_type=SecurityTypes.LLM,
+        #     llm_manager=llm_manager,
+        # )
 
-        output_guard = OutputGuardFactory.create()
+        # output_guard = OutputGuardFactory.create()
 
         # context_strategy = ContextStrategyFactory.create()
 
-        token_budget_strategy = TokenBudgetStrategyFactory.create()
+        # token_budget_strategy = TokenBudgetStrategyFactory.create()
 
         # llm_router = RuleBasedLLMRouter()
 

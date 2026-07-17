@@ -14,6 +14,8 @@ from src.config.context_builder import ContextBuilder
 
 from src.config.query_builder import QueryBuilder
 
+from src.config.security_builder import SecurityBuilder
+
 
 class FrameworkBuilder:
     """
@@ -42,6 +44,8 @@ class FrameworkBuilder:
         self.context_builder = ContextBuilder(config)
 
         self.query_builder = QueryBuilder(config)
+
+        self.security_builder = SecurityBuilder(config)
 
 
     def build_core(
@@ -93,6 +97,13 @@ class FrameworkBuilder:
 
         self.components.memory_retriever = query_components["memory_retriever"]
 
+        security_components = self.build_security()
+        
+        self.components.security_guard = security_components["security_guard"]
+        self.components.output_guard = security_components["output_guard"]
+        self.components.token_budget_strategy = security_components["token_budget_strategy"]
+        self.components.reranker = security_components["reranker"]
+
         return self.components
     
 
@@ -122,5 +133,11 @@ class FrameworkBuilder:
 
     def build_query(self):
         return self.query_builder.build(
+            llm_manager=self.components.llm_manager,
+        )
+    
+
+    def build_security(self):
+        return self.security_builder.build(
             llm_manager=self.components.llm_manager,
         )

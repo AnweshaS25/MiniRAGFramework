@@ -1,7 +1,9 @@
 from src.constants import PromptRouterTypes
+from src.constants import RerankerTypes
 from src.constants import ToolRouterTypes
 from src.constants import ContextRouterTypes
 from src.constants import QueryRewriterTypes
+from src.constants import SecurityTypes
 
 from dataclasses import dataclass
 
@@ -28,6 +30,10 @@ class FrameworkConfig:
     context_router_type: ContextRouterTypes
 
     query_rewriter_type: QueryRewriterTypes
+
+    security_type: SecurityTypes
+
+    reranker_type: RerankerTypes
 
     conversation_window_size: int = 2
 
