@@ -33,6 +33,8 @@ from src.constants import (
     RerankerTypes,
     SecurityTypes,
     RoleTypes,
+    ToolRouterTypes,
+    ContextRouterTypes
 )
 
 from src.pipelines.indexing_pipeline import IndexingPipeline
@@ -230,6 +232,10 @@ if uploaded_file is not None:
             summarize_after=6,
 
             prompt_router_type=PromptRouterTypes.RULE_BASED,
+
+            tool_router_type=ToolRouterTypes.LLM,
+
+            context_router_type=ContextRouterTypes.RULE_BASED,
         )
 
         builder = FrameworkBuilder(config)
@@ -238,9 +244,13 @@ if uploaded_file is not None:
 
         framework = builder.build(pdf_path)
 
+        tool_manager = framework.tool_manager
+
         prompt_manager = framework.prompt_manager
 
         memory = framework.memory
+
+        context_manager = framework.context_manager
 
         st.write(type(framework))
 
@@ -398,35 +408,35 @@ if uploaded_file is not None:
         
 
 
-        tool_router_prompt = ToolRouterPrompt()
+        # tool_router_prompt = ToolRouterPrompt()
 
 
         # ---------------- Tools ---------------- #
 
-        tool_registry = ToolRegistry()
+        # tool_registry = ToolRegistry()
 
-        tool_registry.register_tool(
-            CalculatorTool()
-        )
+        # tool_registry.register_tool(
+        #     CalculatorTool()
+        # )
 
-        tool_executor = ToolExecutor(
-            registry=tool_registry,
-        )
+        # tool_executor = ToolExecutor(
+        #     registry=tool_registry,
+        # )
 
-        tool_registry.register_tool(
-            DateTimeTool()
-        )
+        # tool_registry.register_tool(
+        #     DateTimeTool()
+        # )
 
-        tool_router = LLMToolRouter(
-            llm_manager=llm_manager,
-            prompt_template=tool_router_prompt,
-            registry=tool_registry,
-        )
+        # tool_router = LLMToolRouter(
+        #     llm_manager=llm_manager,
+        #     prompt_template=tool_router_prompt,
+        #     registry=tool_registry,
+        # )
 
-        tool_manager = ToolManager(
-            router=tool_router,
-            executor=tool_executor,
-        )
+        # tool_manager = ToolManager(
+        #     router=tool_router,
+        #     executor=tool_executor,
+        # )
 
         # llm_router = RuleBasedLLMRouter()
 
@@ -490,22 +500,22 @@ if uploaded_file is not None:
         )
 
 
-        context_registry = ContextRegistry()
+        # context_registry = ContextRegistry()
 
-        context_registry.register_strategy(
-            "default",
-            DefaultContextStrategy(),
-        )
+        # context_registry.register_strategy(
+        #     "default",
+        #     DefaultContextStrategy(),
+        # )
 
-        context_registry.register_strategy(
-            "hybrid",
-            HybridContextStrategy(),
-        )
+        # context_registry.register_strategy(
+        #     "hybrid",
+        #     HybridContextStrategy(),
+        # )
 
-        context_registry.register_strategy(
-            "lcm",
-            LCMContextStrategy(),
-        )
+        # context_registry.register_strategy(
+        #     "lcm",
+        #     LCMContextStrategy(),
+        # )
 
 #         context_router = LLMContextRouter(
 #               llm_manager=llm_manager,
@@ -513,12 +523,12 @@ if uploaded_file is not None:
 #               registry=context_registry,
 #         )
 
-        context_router = RuleBasedContextRouter()
+        # context_router = RuleBasedContextRouter()
 
-        context_manager = ContextManager(
-            router=context_router,
-            registry=context_registry,
-        )
+        # context_manager = ContextManager(
+        #     router=context_router,
+        #     registry=context_registry,
+        # )
 
 
         rag_pipeline = ConversationalRAGPipeline(
