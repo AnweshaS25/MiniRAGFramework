@@ -1,0 +1,25 @@
+from src.constants import PromptRouterTypes
+
+from dataclasses import dataclass
+
+
+@dataclass
+class FrameworkConfig:
+    """
+    Stores the configuration required to build
+    a MiniRAG framework.
+    """
+
+    loader_type: str
+    splitter_type: str
+    embedding_type: str
+    vector_store_type: str
+    retriever_type: str
+
+    llm_types: list[str]
+    
+    prompt_router_type: PromptRouterTypes
+
+    conversation_window_size: int = 2
+
+    summarize_after: int = 6
