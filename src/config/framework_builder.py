@@ -18,6 +18,8 @@ from src.config.security_builder import SecurityBuilder
 
 from src.config.indexing_pipeline_builder import IndexingPipelineBuilder
 
+from src.config.pipeline_builder import PipelineBuilder
+
 
 class FrameworkBuilder:
     """
@@ -50,6 +52,8 @@ class FrameworkBuilder:
         self.security_builder = SecurityBuilder(config)
 
         self.indexing_pipeline_builder = IndexingPipelineBuilder(config)
+
+        self.pipeline_builder = PipelineBuilder(config)
 
 
     def build_core(
@@ -114,6 +118,8 @@ class FrameworkBuilder:
 
         self.components.indexing_pipeline = indexing_components["indexing_pipeline"]
 
+        self.components.pipeline = self.build_pipeline()
+
         return self.components
     
 
@@ -156,4 +162,10 @@ class FrameworkBuilder:
     def build_indexing_pipeline(self):
         return self.indexing_pipeline_builder.build(
             core=self.components.core,
+        )
+    
+
+    def build_pipeline(self):
+        return self.pipeline_builder.build(
+            components=self.components,
         )

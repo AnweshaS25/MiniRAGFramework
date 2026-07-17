@@ -29,8 +29,8 @@ class FrameworkComponents:
 
         self.token_budget_strategy = None
 
-        self.pipeline = None
-
         self.document_store = None
 
         self.indexing_pipeline = None
+        
+        self.pipeline = None

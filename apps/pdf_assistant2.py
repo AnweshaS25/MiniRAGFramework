@@ -276,6 +276,8 @@ if uploaded_file is not None:
 
         token_budget_strategy = framework.token_budget_strategy
 
+        rag_pipeline = framework.pipeline
+
 
 
 
@@ -561,21 +563,21 @@ if uploaded_file is not None:
         # )
 
 
-        rag_pipeline = ConversationalRAGPipeline(
-            retriever=retriever,
-            prompt_manager=prompt_manager,
-            document_store=document_store,
-            llm_manager=llm_manager,
-            reranker=reranker,
-            context_manager=context_manager,
-            token_budget_strategy=token_budget_strategy,
-            security_guard=security_guard,
-            output_guard=output_guard,
-            tool_manager=tool_manager,
-            memory=memory,
-            query_rewriter=query_rewriter,
-            memory_retriever=memory_retriever,
-        )
+        # rag_pipeline = ConversationalRAGPipeline(
+        #     retriever=retriever,
+        #     prompt_manager=prompt_manager,
+        #     document_store=document_store,
+        #     llm_manager=llm_manager,
+        #     reranker=reranker,
+        #     context_manager=context_manager,
+        #     token_budget_strategy=token_budget_strategy,
+        #     security_guard=security_guard,
+        #     output_guard=output_guard,
+        #     tool_manager=tool_manager,
+        #     memory=memory,
+        #     query_rewriter=query_rewriter,
+        #     memory_retriever=memory_retriever,
+        # )
 
         st.session_state.rag_pipeline = rag_pipeline
         st.session_state.indexed = True

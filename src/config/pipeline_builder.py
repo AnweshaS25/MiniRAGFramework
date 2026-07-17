@@ -15,13 +15,12 @@ class PipelineBuilder:
     def build(
         self,
         components,
-        document_store,
     ):
         return ConversationalRAGPipeline(
 
             retriever=components.core["retriever"],
             prompt_manager=components.prompt_manager,
-            document_store=document_store,
+            document_store=components.document_store,
             llm_manager=components.llm_manager,
             reranker=components.reranker,
             context_manager=components.context_manager,
