@@ -1,4 +1,5 @@
-from statistics import mean
+from statistics import mean, stdev
+import copy
 
 
 class MetricsCollector:
@@ -17,8 +18,8 @@ class MetricsCollector:
     ):
 
         record = {
-            "timings": timings,
-            "metadata": metadata or {},
+            "timings": copy.deepcopy(timings),
+            "metadata": copy.deepcopy(metadata or {}),
         }
 
         self.records.append(record)
@@ -50,6 +51,7 @@ class MetricsCollector:
                 "average": mean(values),
                 "minimum": min(values),
                 "maximum": max(values),
+                "standard_deviation": stdev(values) if len(values) > 1 else 0.0,
                 "runs": len(values),
             }
 
