@@ -33,6 +33,13 @@ class RetrievalEvaluationRunner:
                 k=k,
             )
 
+            print("\n========== RETRIEVED DOCUMENTS ==========\n")
+
+            for doc in retrieved_documents:
+                print(doc.metadata)
+
+            print("\n=========================================\n")
+
             retrieved_ids = [
                 (
                     doc.metadata["source"],

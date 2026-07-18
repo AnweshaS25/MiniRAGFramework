@@ -1,0 +1,14 @@
+[
+    {
+        "question": "Is Relational Model present in this pdf?",
+
+        "reference_answer": "Relational Model...",
+
+        "relevant_ids": [
+            {
+                "source": "data/BTechProject1_Final.pdf",
+                "page": 13
+            }
+        ]
+    }
+]

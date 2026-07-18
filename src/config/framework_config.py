@@ -35,6 +35,8 @@ class FrameworkConfig:
 
     reranker_type: RerankerTypes
 
+    persist_directory: str = "./chroma_db"
+
     conversation_window_size: int = 2
 
     summarize_after: int = 6

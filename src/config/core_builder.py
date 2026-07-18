@@ -37,6 +37,7 @@ class CoreBuilder:
 
         vector_store = VectorStoreFactory.create(
             self.config.vector_store_type,
+            persist_directory=self.config.persist_directory,
         )
 
         retriever = RetrieverFactory.create(
