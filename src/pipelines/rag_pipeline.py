@@ -352,10 +352,19 @@ class RAGPipeline(BasePipeline):
 
         context_strategy = self.context_manager.get_strategy(query)
 
+
+
+        self._start_timer("tool_routing")
+
         tool_used, tool_result = self.tool_manager.process(
             user_query=query,
             query=query,      # passed as kwargs to tools
         )
+
+        self._stop_timer("tool_routing")
+
+
+
 
         if tool_used:
 
@@ -393,11 +402,20 @@ class RAGPipeline(BasePipeline):
                 context_strategy=context_strategy,
             )
         
+
+
+            self._start_timer("retrieval")
+
             documents = self._retrieve_documents(
                 query=query, 
                 user=user, 
                 k=k,
             )
+
+            self._stop_timer("retrieval")
+
+
+
 
             print("\n====== RETRIEVED DOCUMENTS ======")
 
@@ -407,11 +425,22 @@ class RAGPipeline(BasePipeline):
 
             print("\n===============================")
 
+
+
+
+            self._start_timer("reranking")
+
             documents = self._rerank_documents(
                 query=query, 
                 documents=documents, 
                 top_k=k,
             )
+
+            self._stop_timer("reranking")
+
+
+
+
 
             if context_strategy.name == "hybrid":
                 print("Loading original pages for Hybrid Mode")
@@ -437,6 +466,11 @@ class RAGPipeline(BasePipeline):
 
         prompt_template = self.prompt_manager.get_prompt_template(query)
 
+
+
+
+        self._start_timer("prompt_building")
+
         prompt = self._prepare_prompt(
             query=query,
             context_strategy=context_strategy,
@@ -445,6 +479,12 @@ class RAGPipeline(BasePipeline):
             prompt_template=prompt_template,
             llm=llm,
         )
+
+        self._stop_timer("prompt_building")
+
+
+
+
 
         print("\n========== FINAL PROMPT ==========\n")
         print(prompt)
@@ -477,24 +517,56 @@ class RAGPipeline(BasePipeline):
                 # f"All registered LLMs failed. Last error: {last_exception}"
             # )
 
+
+
+
+        self._start_timer("llm_generation")
+
         response = self._generate_response(
             query=query,
             prompt=prompt,
         )
+
+        self._stop_timer("llm_generation")
+
+
+
+
 
         # response = llm.generate(prompt)
 
         # response = self._generate_response(prompt)
         # llm_response = self.llm.generate(prompt)
 
+
+
+
+        self._start_timer("output_validation")
+
         output_result = self.output_guard.validate(response.text,)
+
+        self._stop_timer("output_validation")
+
+
+
 
         if not output_result.safe:
             raise ValueError(output_result.reason)
+
+
+
+
+
+        self._start_timer("memory_update")
 
         self._after_generation(
             query=query,
             response=response,
         )
+
+        self._stop_timer("memory_update")
+
+
+        
 
         return response

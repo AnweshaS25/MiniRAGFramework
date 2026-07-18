@@ -31,4 +31,6 @@ class PipelineBuilder:
             memory=components.memory,
             query_rewriter=components.query_rewriter,
             memory_retriever=components.memory_retriever,
+
+            timer=components.timer,
         )

@@ -34,3 +34,5 @@ class FrameworkComponents:
         self.indexing_pipeline = None
         
         self.pipeline = None
+
+        self.timer = None

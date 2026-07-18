@@ -20,6 +20,8 @@ from src.config.indexing_pipeline_builder import IndexingPipelineBuilder
 
 from src.config.pipeline_builder import PipelineBuilder
 
+from src.evaluation.timer import StageTimer
+
 
 class FrameworkBuilder:
     """
@@ -35,6 +37,8 @@ class FrameworkBuilder:
         self.config = config
 
         self.components = FrameworkComponents()
+
+        self.components.timer = StageTimer()
 
         self.core_builder = CoreBuilder(config)
         self.llm_builder = LLMBuilder(config)

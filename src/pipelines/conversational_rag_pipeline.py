@@ -31,9 +31,12 @@ class ConversationalRAGPipeline(RAGPipeline):
         memory: MemoryManager,
         query_rewriter,
         memory_retriever: MemoryRetrieverManager,
+        timer=None,
     ):
 
         super().__init__(
+
+
             retriever=retriever,
             prompt_manager=prompt_manager,
             document_store=document_store,
@@ -49,8 +52,30 @@ class ConversationalRAGPipeline(RAGPipeline):
         self.memory = memory
         self.query_rewriter = query_rewriter
         self.memory_retriever = memory_retriever
+        self.timer = timer
 
     
+
+    def _start_timer(
+        self,
+        stage: str,
+    ):
+
+        if self.timer is not None:
+            self.timer.start(stage)
+
+
+
+    def _stop_timer(
+        self,
+        stage: str,
+    ):
+
+        if self.timer is not None:
+            self.timer.stop(stage)
+
+
+
     def _build_prompt(self, question: str, context: str,) -> str:
 
         print(">>> USING Conversational _build_prompt")
@@ -97,17 +122,27 @@ class ConversationalRAGPipeline(RAGPipeline):
         Rewrite conversational queries before running RAG.
         """
 
+        self._start_timer("total")
+
+        self._start_timer("query_rewriting")
+
         rewritten_query = self.query_rewriter.rewrite(
             query=query,
             memory=self.memory,
         )
+
+        self._stop_timer("query_rewriting")
 
         print("\n=========== QUERY REWRITER ===========")
         print("Original :", query)
         print("Rewritten:", rewritten_query)
         print("======================================\n")
 
-        return super().run(
+        response = super().run(
             query=rewritten_query,
             user=user,
         )
+
+        self._stop_timer("total")
+
+        return response
