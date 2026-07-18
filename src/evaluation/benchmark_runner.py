@@ -1,5 +1,5 @@
 from src.evaluation.timer import StageTimer
-from src.evaluation.metrics import MetricsCollector
+from src.evaluation.metrics_collector import MetricsCollector
 
 
 class BenchmarkRunner:
@@ -21,12 +21,16 @@ class BenchmarkRunner:
     def run(
         self,
         queries,
+        user,
     ):
 
         for query in queries:
             self.timer.reset()
             # self.timer.start("total")
-            self.pipeline.run(query)
+            self.pipeline.run(
+                query,
+                user=user,
+            )
             # self.timer.stop("total")            
             self.collector.add_record(
                 timings=self.timer.get_timings(),
