@@ -7,6 +7,7 @@ from src.evaluation.metrics.retrieval_metrics import (
     hit_rate,
     mean_reciprocal_rank,
 )
+from src.core.document_id import DocumentID
 
 
 class RetrievalEvaluator(BaseEvaluator):
@@ -14,7 +15,12 @@ class RetrievalEvaluator(BaseEvaluator):
     Evaluates retrieval performance.
     """
 
-    def evaluate(self, retrieved_ids: list[str], relevant_ids: Set[str], k: int,) -> EvaluationResult:
+    def evaluate(
+        self, 
+        retrieved_ids: list[DocumentID], 
+        relevant_ids: Set[DocumentID],
+        k: int,
+    ) -> EvaluationResult:
 
         if k <= 0:
             raise ValueError("k must be greater than 0.")

@@ -1,6 +1,12 @@
 from typing import Set
 
-def precision_at_k(retrieved_ids: list[str], relevant_ids: Set[str], k: int,) -> float:
+from src.core.document_id import DocumentID
+
+def precision_at_k(
+    retrieved_ids: list[DocumentID], 
+    relevant_ids: Set[DocumentID], 
+    k: int,
+) -> float:
     """
     Compute Precision@k.
     """
@@ -22,7 +28,11 @@ def precision_at_k(retrieved_ids: list[str], relevant_ids: Set[str], k: int,) ->
 
 
 
-def recall_at_k(retrieved_ids: list[str], relevant_ids: Set[str], k: int,) -> float:
+def recall_at_k(
+    retrieved_ids: list[DocumentID], 
+    relevant_ids: Set[DocumentID], 
+    k: int,
+) -> float:
     """
     Compute Recall@k.
     """
@@ -44,7 +54,11 @@ def recall_at_k(retrieved_ids: list[str], relevant_ids: Set[str], k: int,) -> fl
 
 
 
-def hit_rate(retrieved_ids: list[str], relevant_ids: Set[str], k: int,) -> float:
+def hit_rate(
+    retrieved_ids: list[DocumentID], 
+    relevant_ids: Set[DocumentID], 
+    k: int,
+) -> float:
     """
     Compute Hit Rate@k.
     """
@@ -66,7 +80,11 @@ def hit_rate(retrieved_ids: list[str], relevant_ids: Set[str], k: int,) -> float
 
 
 
-def mean_reciprocal_rank(retrieved_ids: list[str], relevant_ids: Set[str], k: int,) -> float:
+def mean_reciprocal_rank(
+    retrieved_ids: list[DocumentID], 
+    relevant_ids: Set[DocumentID], 
+    k: int,
+) -> float:
     """
     Compute Reciprocal Rank (RR) for a single query.
     """

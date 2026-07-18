@@ -10,12 +10,19 @@ from src.pipelines.rag_pipeline import RAGPipeline
 
 class EvaluationRunner:
 
-    def __init__(self, pipeline: RAGPipeline, evaluator: RAGEvaluator,):
+    def __init__(
+        self, 
+        pipeline: RAGPipeline, 
+        evaluator: RAGEvaluator,
+    ):
         self.pipeline = pipeline
         self.evaluator = evaluator
 
 
-    def run(self, samples: List[EvaluationSample],) -> EvaluationReport:
+    def run(
+        self, 
+        samples: List[EvaluationSample],
+    ) -> EvaluationReport:
         """
         Run evaluation on a dataset.
         """
