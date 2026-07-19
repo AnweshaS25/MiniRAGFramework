@@ -1,0 +1,14 @@
+[
+    {
+        "question": "What is this project about?",
+        "reference_answer": "This project is about developing a Grocery Store Management System."
+    },
+    {
+        "question": "What database is used in the project?",
+        "reference_answer": "SQLite is used as the database."
+    },
+    {
+        "question": "What frontend framework is used?",
+        "reference_answer": "React is used as the frontend framework."
+    }
+]

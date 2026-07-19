@@ -22,6 +22,7 @@ class EvaluationRunner:
     def run(
         self, 
         samples: List[EvaluationSample],
+        user,
     ) -> EvaluationReport:
         """
         Run evaluation on a dataset.
@@ -32,10 +33,14 @@ class EvaluationRunner:
 
         records: List[EvaluationRecord] = []  # Every time we will evaluate one question, we'll create an EvaluationRecord and store it here.
 
-        for sample in samples:
+        # for sample in samples:
+        for index, sample in enumerate(samples, start=1):
+
+            print(f"Running sample {index}/{len(samples)}")
 
             response = self.pipeline.run(
                 query=sample.question,
+                user=user,
             )
 
             metrics = self.evaluator.evaluate(
