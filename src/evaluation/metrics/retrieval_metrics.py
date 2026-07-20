@@ -15,6 +15,7 @@ def precision_at_k(
         raise ValueError("k must be greater than 0.")
     
     retrieved = retrieved_ids[:k]
+    # retrieved = list(dict.fromkeys(retrieved_ids[:k]))
 
     if not retrieved:
         return 0.0
@@ -44,6 +45,7 @@ def recall_at_k(
         return 0.0
     
     retrieved = retrieved_ids[:k]
+    # retrieved = list(dict.fromkeys(retrieved_ids[:k]))
 
     relevant_count = sum(
         doc_id in relevant_ids
@@ -70,6 +72,7 @@ def hit_rate(
         return 0.0
 
     retrieved = retrieved_ids[:k]
+    # retrieved = list(dict.fromkeys(retrieved_ids[:k]))
 
     return float(
         any(
@@ -96,6 +99,7 @@ def mean_reciprocal_rank(
         return 0.0
     
     retrieved = retrieved_ids[:k]
+    # retrieved = list(dict.fromkeys(retrieved_ids[:k]))
 
     for rank, doc_id in enumerate(retrieved, start=1):
         if doc_id in relevant_ids:

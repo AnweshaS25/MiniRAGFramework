@@ -33,23 +33,34 @@ class RetrievalEvaluationRunner:
                 k=k,
             )
 
-            print("\n========== RETRIEVED DOCUMENTS ==========\n")
+            print("\nQuestion:", sample.question)
+            print("Retrieved IDs:")
 
-            for doc in retrieved_documents:
-                print(doc.metadata)
+            for doc_id in retrieved_documents:
+                print(doc_id)
 
-            print("\n=========================================\n")
+            print("Expected IDs:")
+            print(sample.relevant_ids)
+            print()
 
-            retrieved_ids = [
-                (
-                    doc.metadata["source"],
-                    doc.metadata["page"],
-                )
-                for doc in retrieved_documents
-            ]
+            # print("\n========== RETRIEVED DOCUMENTS ==========\n")
+
+            # for doc in retrieved_documents:
+            #     print(doc.metadata)
+
+            # print("\n=========================================\n")
+
+            # retrieved_ids = [
+            #     (
+            #         doc.metadata["source"],
+            #         doc.metadata["page"],
+            #     )
+            #     for doc in retrieved_documents
+            # ]
 
             metrics = self.evaluator.evaluate(
-                retrieved_ids=retrieved_ids,
+                # retrieved_ids=retrieved_ids,
+                retrieved_ids=retrieved_documents,
                 relevant_ids=sample.relevant_ids,
                 k=k,
             )

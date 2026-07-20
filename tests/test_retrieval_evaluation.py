@@ -21,6 +21,10 @@ from src.evaluation.dataset_loaders.retrieval_dataset_loader import RetrievalDat
 from src.evaluation.retrieval_evaluation_runner import RetrievalEvaluationRunner
 from src.evaluation.retrieval_evaluator import RetrievalEvaluator
 
+from src.evaluation.minirag_retriever_adapter import (
+    MiniRAGRetrieverAdapter,
+)
+
 
 if __name__ == "__main__":
 
@@ -74,8 +78,12 @@ if __name__ == "__main__":
         "tests/data/retrieval_dataset.json",
     )
 
+    adapter = MiniRAGRetrieverAdapter(
+        framework.core["retriever"],
+    )
+
     runner = RetrievalEvaluationRunner(
-        retriever=framework.core["retriever"],
+        retriever=adapter,
         evaluator=RetrievalEvaluator(),
     )
 
@@ -87,3 +95,16 @@ if __name__ == "__main__":
     print("\n========== RETRIEVAL EVALUATION REPORT ==========\n")
 
     print(report)
+
+    print("\n========== PER-QUESTION RESULTS ==========\n")
+
+    for sample, record in zip(samples, report["records"]):
+        print("-" * 60)
+        print("Question:")
+        print(sample.question)
+        print()
+        print("Relevant IDs:")
+        print(sample.relevant_ids)
+        print()
+        print("Metrics:")
+        print(record)

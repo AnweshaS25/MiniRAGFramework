@@ -1,14 +1,67 @@
 [
-    {
-        "question": "Is Relational Model present in this pdf?",
+{
+    "question": "What is the Grocery Store Management System?",
+    "reference_answer": "The Grocery Store Management System is a web-based application developed to automate and simplify the daily operations of a grocery store.",
+    "relevant_ids": [
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 4
+        }
+    ]
+},
 
-        "reference_answer": "Relational Model...",
+{
+    "question": "What problems does the Grocery Store Management System solve?",
+    "reference_answer": "It addresses errors in inventory tracking, billing, and sales management caused by manual record-keeping.",
+    "relevant_ids": [
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 4
+        }
+    ]
+},
 
-        "relevant_ids": [
-            {
-                "source": "data/BTechProject1_Final.pdf",
-                "page": 13
-            }
-        ]
-    }
+{
+    "question": "Which frontend and backend technologies are used in the project?",
+    "reference_answer": "The frontend is developed using React.js and the backend is developed using Django REST Framework.",
+    "relevant_ids": [
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 4
+        }
+    ]
+},
+
+{
+    "question": "What functionalities are available to administrators?",
+    "reference_answer": "Administrators can manage products, update stock levels, and view customer orders.",
+    "relevant_ids": [
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 4
+        }
+    ]
+},
+
+{
+    "question": "What functionalities are available to customers?",
+    "reference_answer": "Customers can register, browse products, maintain a wishlist, add items to a shopping cart, manage delivery addresses, place orders, and view their order history.",
+    "relevant_ids": [
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 4
+        }
+    ]
+},
+
+{
+    "question": "What future enhancements are suggested for the Grocery Store Management System?",
+    "reference_answer": "Future enhancements include online payment integration, order tracking, and mobile application support.",
+    "relevant_ids": [
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 4
+        }
+    ]
+}
 ]
