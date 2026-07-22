@@ -24,9 +24,11 @@ class MiniRAGRetrieverAdapter:
         )
 
         seen = set()
-        document_ids = []
+        retrieved_ids = []
 
         for doc in documents:
+
+            print(doc.metadata)
 
             doc_id = (
                 doc.metadata["source"],
@@ -35,6 +37,6 @@ class MiniRAGRetrieverAdapter:
 
             if doc_id not in seen:
                 seen.add(doc_id)
-                document_ids.append(doc_id)
+                retrieved_ids.append(doc_id)
 
-        return document_ids
+        return retrieved_ids

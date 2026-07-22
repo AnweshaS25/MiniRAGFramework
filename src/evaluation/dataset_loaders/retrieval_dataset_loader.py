@@ -37,9 +37,10 @@ class RetrievalDatasetLoader:
 
             sample = RetrievalEvaluationSample(
                 question=item["question"],
+                # relevant_ids=relevant_ids,
                 relevant_ids=relevant_ids,
             )
 
             samples.append(sample)
 
-        return samples
+        return samples 

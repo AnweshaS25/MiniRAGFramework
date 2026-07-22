@@ -75,6 +75,9 @@ if __name__ == "__main__":
     samples = loader.load(
         "tests/data/retrieval_dataset.json",
     )
+    # samples = loader.load(
+    #     "benchmark_final.json"
+    # )
 
     runner = RetrievalEvaluationRunner(
         retriever=adapter,

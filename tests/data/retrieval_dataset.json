@@ -1,67 +1,455 @@
 [
-{
+  {
     "question": "What is the Grocery Store Management System?",
-    "reference_answer": "The Grocery Store Management System is a web-based application developed to automate and simplify the daily operations of a grocery store.",
+    "relevant_ids": [
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 4
+        },
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 6
+        }
+    ]
+  },
+  {
+    "question": "What challenges does the proposed Grocery Store Management System address?",
     "relevant_ids": [
         {
             "source": "data/BTechProject1_Final.pdf",
             "page": 4
         }
     ]
+  },
+  {
+    "question": "Which frontend, backend, and database technologies are used to develop the Grocery Store Management System?",
+    "relevant_ids": [
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 4
+        },
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 10
+        },
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 16
+        },
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 19
+        }
+    ]
+  },
+  {
+  "question": "Why was the Grocery Store Management System developed?",
+  "relevant_ids": [
+    {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 4
+    }
+  ]
 },
-
 {
-    "question": "What problems does the Grocery Store Management System solve?",
-    "reference_answer": "It addresses errors in inventory tracking, billing, and sales management caused by manual record-keeping.",
-    "relevant_ids": [
-        {
-            "source": "data/BTechProject1_Final.pdf",
-            "page": 4
-        }
-    ]
+  "question": "What problems does traditional grocery store management face?",
+  "relevant_ids": [
+    {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 4
+    }
+  ]
 },
-
 {
-    "question": "Which frontend and backend technologies are used in the project?",
-    "reference_answer": "The frontend is developed using React.js and the backend is developed using Django REST Framework.",
-    "relevant_ids": [
-        {
-            "source": "data/BTechProject1_Final.pdf",
-            "page": 4
-        }
-    ]
+  "question": "What can administrators do in the system?",
+  "relevant_ids": [
+    {
+      "source": "data/BTechProject1_Final.pdf",
+      "page": 4
+    },
+    { 
+        "source": "data/BTechProject1_Final.pdf", 
+        "page": 6
+    },
+    {
+      "source": "data/BTechProject1_Final.pdf",
+      "page": 9
+    }
+  ]
 },
-
 {
-    "question": "What functionalities are available to administrators?",
-    "reference_answer": "Administrators can manage products, update stock levels, and view customer orders.",
-    "relevant_ids": [
-        {
-            "source": "data/BTechProject1_Final.pdf",
-            "page": 4
-        }
-    ]
+  "question": "What can customers do in the system?",
+  "relevant_ids": [
+    {
+      "source": "data/BTechProject1_Final.pdf",
+      "page": 4
+    },
+    { 
+        "source": "data/BTechProject1_Final.pdf", 
+        "page": 6 
+    },
+    {
+      "source": "data/BTechProject1_Final.pdf",
+      "page": 9
+    }
+  ]
 },
-
 {
-    "question": "What functionalities are available to customers?",
-    "reference_answer": "Customers can register, browse products, maintain a wishlist, add items to a shopping cart, manage delivery addresses, place orders, and view their order history.",
-    "relevant_ids": [
-        {
-            "source": "data/BTechProject1_Final.pdf",
-            "page": 4
-        }
-    ]
+  "question": "How does the system improve operational efficiency?",
+  "relevant_ids": [
+    {
+      "source": "data/BTechProject1_Final.pdf",
+      "page": 4
+    },
+    { 
+        "source": "data/BTechProject1_Final.pdf", 
+        "page": 6 
+    }
+  ]
 },
-
 {
-    "question": "What future enhancements are suggested for the Grocery Store Management System?",
-    "reference_answer": "Future enhancements include online payment integration, order tracking, and mobile application support.",
+  "question": "What future enhancements are mentioned in the abstract?",
+  "relevant_ids": [
+    {
+      "source": "data/BTechProject1_Final.pdf",
+      "page": 4
+    },
+    {
+      "source": "data/BTechProject1_Final.pdf",
+      "page": 18
+    }
+  ]
+},
+  {
+    "question": "What is the scope of the Grocery Store Management System?",
+    "relevant_ids": [
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 6
+      }
+    ]
+  },
+  {
+    "question": "What is the purpose of the Grocery Store Management System project?",
+    "relevant_ids": [
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 6
+      }
+    ]
+  },
+  {
+    "question": "What problem statement is addressed by the project?",
+    "relevant_ids": [
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 8
+      }
+    ]
+  },
+  {
+    "question": "What is the motivation behind developing this project?",
+    "relevant_ids": [
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 8
+      }
+    ]
+  },
+  {
+    "question": "What functional requirements are provided for administrators?",
+    "relevant_ids": [
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 9
+      }
+    ]
+  },
+  {
+    "question": "What functional requirements are provided for customers?",
+    "relevant_ids": [
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 9
+      }
+    ]
+  },
+  {
+    "question": "What are the non-functional requirements of the system?",
+    "relevant_ids": [
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 10
+      }
+    ]
+  },
+  {
+    "question": "What system requirements are specified for the project?",
+    "relevant_ids": [
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 10
+      }
+    ]
+  },
+  {
+    "question": "Which database is used in the project?",
+    "relevant_ids": [
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 10
+      }
+    ]
+  },
+  {
+    "question": "Which frontend and backend frameworks are used in the project?",
+    "relevant_ids": [
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 10
+      }
+    ]
+  },
+  {
+    "question": "What are the objectives of the Grocery Store Management System?",
+    "relevant_ids": [
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 14
+      },
+      {
+        "source": "data/BTechProject1_Final.pdf",
+        "page": 4
+      }
+    ]
+  },
+  {
+    "question": "Why is the Grocery Store Management System technically feasible?",
     "relevant_ids": [
         {
             "source": "data/BTechProject1_Final.pdf",
             "page": 4
+        },
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 15
         }
     ]
+  },
+  {
+    "question": "Why is the Grocery Store Management System economically feasible?",
+    "relevant_ids": [
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 4
+        },
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 15
+        }
+    ]
+  },
+  {
+    "question": "Why is the Grocery Store Management System operationally feasible?",
+    "relevant_ids": [
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 4
+        },
+        {
+            "source": "data/BTechProject1_Final.pdf",
+            "page": 15
+        }
+    ]
+  },
+  {
+    "question": "What architecture does the Grocery Store Management System follow?",
+    "relevant_ids": [
+        {  
+            "source": "data/BTechProject1_Final.pdf", 
+            "page": 16 
+        }
+    ]
+  },
+  {
+  "question": "What are the three layers of the system architecture?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 16 }
+  ]
+},
+{
+  "question": "How does the frontend communicate with the backend?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 16 }
+  ]
+},
+{
+  "question": "What is the responsibility of the Presentation Layer?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 16 }
+  ]
+},
+{
+  "question": "What responsibilities does the Application Layer perform?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 16 }
+  ]
+},
+{
+  "question": "What information is stored in the Data Layer?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 16 }
+  ]
+},
+{
+  "question": "What subsystems are present in the Grocery Store Management System?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 16 },
+    { "source": "data/BTechProject1_Final.pdf", "page": 17 }
+  ]
+},
+{
+  "question": "What components are included in the User Management subsystem?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 16 }
+  ]
+},
+{
+  "question": "What components are included in the Product Management subsystem?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 16 }
+  ]
+},
+{
+  "question": "What components are included in the Shopping Cart subsystem?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 17 }
+  ]
+},{
+  "question": "What components are included in the Wishlist subsystem?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 17 }
+  ]
+},
+{
+  "question": "What components are included in the Address Management subsystem?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 17 }
+  ]
+},
+{
+  "question": "What components are included in the Order Management subsystem?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 17 }
+  ]
+},
+{
+  "question": "What components are included in the Billing subsystem?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 17 }
+  ]
+},
+{
+  "question": "What is the interaction flow of the system?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 17 },
+    { "source": "data/BTechProject1_Final.pdf", "page": 18 }
+  ]
+},
+{
+  "question": "What happens after a customer places an order?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 17 },
+    { "source": "data/BTechProject1_Final.pdf", "page": 18 }
+  ]
+},
+{
+  "question": "How is the code organized in the Grocery Store Management System?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 19 },
+    { "source": "data/BTechProject1_Final.pdf", "page": 20 }
+  ]
+},
+{
+  "question": "Which frontend pages are implemented in the React application?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 19 }
+  ]
+},
+{
+  "question": "What is the role of the Context API in the frontend?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 19 }
+  ]
+},
+{
+  "question": "Which models are defined in the Django backend?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 19 }
+  ]
+},
+{
+  "question": "What API endpoints are provided by the backend?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 20 }
+  ]
+},
+{
+  "question": "Describe the working flow of the application.",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 20 }
+  ]
+},
+{
+  "question": "What high-level features are implemented in the Grocery Store Management System?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 21 }
+  ]
+},
+{
+  "question": "What are the limitations of the Grocery Store Management System?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 22 }
+  ]
+},
+{
+  "question": "What future improvements are proposed for the Grocery Store Management System?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 23 }
+  ]
+},
+{
+  "question": "What conclusion is drawn about the Grocery Store Management System?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 24 }
+  ]
+},
+{
+  "question": "Where is the GitHub repository for the project?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 26 }
+  ]
+},
+{
+  "question": "What commands are required to start the frontend and backend?",
+  "relevant_ids": [
+    { "source": "data/BTechProject1_Final.pdf", "page": 26 }
+  ]
+},
+{
+  "question": "Which technologies are used to implement the three-tier architecture of the Grocery Store Management System?",
+  "relevant_ids": [
+    {"source":"data/BTechProject1_Final.pdf","page":16},
+    {"source":"data/BTechProject1_Final.pdf","page":19},
+    {"source":"data/BTechProject1_Final.pdf","page":20}
+  ]
+},
+{
+  "question": "How do the implemented features address the limitations mentioned in the report?",
+  "relevant_ids": [
+    {"source":"data/BTechProject1_Final.pdf","page":21},
+    {"source":"data/BTechProject1_Final.pdf","page":22},
+    {"source":"data/BTechProject1_Final.pdf","page":23}
+  ]
 }
 ]

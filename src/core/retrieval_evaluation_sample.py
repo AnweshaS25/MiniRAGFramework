@@ -11,4 +11,5 @@ class RetrievalEvaluationSample:
 
     question: str
 
-    relevant_ids: set[DocumentID]
+    # relevant_ids: set[DocumentID]
+    relevant_ids: set[int]

@@ -26,6 +26,10 @@ from src.evaluation.minirag_retriever_adapter import (
 )
 
 
+from src.benchmark.benchmark_annotator import build_benchmark_index
+from src.retrievers.similarity_retriever import SimilarityRetriever
+
+
 if __name__ == "__main__":
 
     pdf_path = "data/BTechProject1_Final.pdf"
@@ -72,11 +76,21 @@ if __name__ == "__main__":
         }
     )
 
+    vector_store, embedding_model = build_benchmark_index()
+
+    retriever = SimilarityRetriever(
+        embedding_model=embedding_model,
+        vector_store=vector_store,
+    )
+
     loader = RetrievalDatasetLoader()
 
     samples = loader.load(
         "tests/data/retrieval_dataset.json",
     )
+    # samples = loader.load(
+    #     "benchmark_final.json",
+    # )
 
     adapter = MiniRAGRetrieverAdapter(
         framework.core["retriever"],

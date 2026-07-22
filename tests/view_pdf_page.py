@@ -4,11 +4,10 @@ pipeline = LangChainPipeline("data/BTechProject1_Final.pdf")
 
 documents = pipeline.load_documents()
 
-PAGE = 4   # change this
+for page_number, doc in enumerate(documents, start=1):
 
-doc = documents[PAGE - 1]
-
-print("=" * 80)
-print(f"PAGE {PAGE}")
-print("=" * 80)
-print(doc.page_content)
+    print("=" * 80)
+    print(f"PAGE {page_number}")
+    print("=" * 80)
+    print(doc.page_content)
+    print("\n\n")

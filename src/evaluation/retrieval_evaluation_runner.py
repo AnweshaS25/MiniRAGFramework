@@ -33,6 +33,17 @@ class RetrievalEvaluationRunner:
                 k=k,
             )
 
+            print("\n" + "=" * 70)
+            print("QUESTION:")
+            print(sample.question)
+
+            print("\nRETRIEVED:")
+            for doc in retrieved_documents:
+                print(doc)
+
+            print("\nEXPECTED:")
+            print(sample.relevant_ids)
+
             print("\nQuestion:", sample.question)
             print("Retrieved IDs:")
 
