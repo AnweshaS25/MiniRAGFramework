@@ -18,6 +18,10 @@ from src.constants import (
 
 from src.config.framework_builder import FrameworkBuilder
 
+from src.evaluation.dataset_loaders.retrieval_dataset_loader import (
+    RetrievalDatasetLoader,
+)
+
 
 # def run_benchmark(
 #     framework,
@@ -97,6 +101,12 @@ from src.constants import RoleTypes
 
 rag_pipeline = framework.pipeline
 
+framework.indexing_pipeline.run(
+    metadata={
+        "permission": "VIEW_HR_DOCUMENTS",
+    }
+)
+
 benchmark_user = User(
     username="benchmark_user",
     roles=[
@@ -108,11 +118,19 @@ runner = BenchmarkRunner(
     pipeline=rag_pipeline,
 )
 
-queries = [
-    "What is this project about?",
-    "What are the functional dependencies?",
-    "Is there data flow diagrams present here?",
-]
+# queries = [
+#     "What is this project about?",
+#     "What are the functional dependencies?",
+#     "Is there data flow diagrams present here?",
+# ]
+
+loader = RetrievalDatasetLoader()
+samples = loader.load(
+    "tests/data/retrieval_dataset.json",
+)
+queries = [sample.question for sample in samples[:20]]
+
+
 
 summary = runner.run(
     queries=queries,

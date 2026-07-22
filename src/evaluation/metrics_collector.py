@@ -1,5 +1,6 @@
 from statistics import mean, stdev
 import copy
+import csv
 
 
 class MetricsCollector:
@@ -56,3 +57,52 @@ class MetricsCollector:
             }
 
         return summary
+    
+
+    def export_csv(
+        self,
+        output_path: str,
+    ):
+        """
+        Export every benchmark run into a CSV file.
+        """
+
+        if not self.records:
+            return
+
+        # collect every stage name
+        stages = set()
+
+        for record in self.records:
+            stages.update(record["timings"].keys())
+
+        stages = sorted(stages)
+
+        with open(
+            output_path,
+            "w",
+            newline="",
+            encoding="utf-8",
+        ) as file:
+
+            writer = csv.writer(file)
+
+            writer.writerow(
+                ["query"] + stages
+            )
+
+            for record in self.records:
+
+                row = [
+                    record["metadata"].get(
+                        "query",
+                        "",
+                    )
+                ]
+
+                for stage in stages:
+                    row.append(
+                        record["timings"].get(stage, "")
+                    )
+
+                writer.writerow(row)

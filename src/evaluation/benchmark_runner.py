@@ -34,6 +34,15 @@ class BenchmarkRunner:
             # self.timer.stop("total")            
             self.collector.add_record(
                 timings=self.timer.get_timings(),
+                metadata={
+                    "query": query,
+                },
             )
 
-        return self.collector.summary()
+        summary = self.collector.summary()
+
+        self.collector.export_csv(
+            "benchmark_results.csv"
+        )
+
+        return summary

@@ -33,7 +33,9 @@ class ToolManager:
 
         print("Router returned:", tool_request)
 
-        if tool_request is None:
+        # if tool_request is None:
+        #     return False, None
+        if not tool_request or not tool_request.tool_name:
             return False, None
 
         tool_kwargs = dict(kwargs)

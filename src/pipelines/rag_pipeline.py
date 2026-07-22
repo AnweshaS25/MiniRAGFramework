@@ -345,6 +345,9 @@ class RAGPipeline(BasePipeline):
 
 
     def run(self, query: str, user: User,) -> LLMResponse:
+
+        self._start_timer("total")
+
         if not query.strip():
             raise ValueError("Query cannot be empty.")
         
@@ -567,6 +570,6 @@ class RAGPipeline(BasePipeline):
         self._stop_timer("memory_update")
 
 
-        
+        self._stop_timer("total")
 
         return response
