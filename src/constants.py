@@ -5,7 +5,10 @@ Framework constants.
 
 class LoaderTypes:
     PDF = "pdf"
-
+    DOCX = "docx"
+    TXT = "txt"
+    CSV = "csv"
+    
 
 class SplitterTypes:
     CHARACTER = "character"

@@ -1,0 +1,7 @@
+Hello Samuel
+
+This is a TXT Loader Test.
+
+MiniRAG Framework.
+
+This file is used to test the TXTLoader.
